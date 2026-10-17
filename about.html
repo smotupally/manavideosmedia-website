@@ -219,5 +219,19 @@
 })();
 </script>
 
+<script>
+(function() {
+  var content = document.querySelector('#news-ticker .ticker-content');
+  if (!content) return;
+  var pos = 0;
+  function tick() {
+    pos -= 1;
+    if (-pos >= content.scrollWidth / 2) { pos = 0; }
+    content.style.transform = 'translateX(' + pos + 'px)';
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
 </body>
 </html>
