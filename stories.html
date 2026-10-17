@@ -990,6 +990,9 @@
   });
   search.addEventListener('input', applyFilters);
   if (dateInput) dateInput.addEventListener('change', applyFilters);
+  // Clear any stale filter values preserved by browser on reload
+  if (dateInput) dateInput.value = '';
+  if (search) search.value = '';
 })();
 </script>
 <script>
