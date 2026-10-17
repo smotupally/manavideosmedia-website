@@ -197,7 +197,7 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
       <h1>{headline}</h1>
       {image_html}
       <div class="te-sub">{te_sub}</div>
-      <div class="meta"><span>{date_str}</span><span>{read_min} min read</span><span>By Mana Videos Media</span></div>
+      <div class="meta"><span>{date_str}</span><span class="sep">•</span><span>{read_min} min read</span><span class="sep">•</span><span>By Mana Videos Media</span></div>
       <div class="article-body">
 {body_paras}
 {extra_html}
@@ -510,21 +510,27 @@ def push_to_github(new_articles=None):
         if fp.exists():
             files.append({"path": f, "content": fp.read_text()})
 
-    import json as js
     # Separate text and binary
     text_files = [f for f in files if not f.get("_binary")]
-    payload = {
-        "owner": "smotupally", "repo": "manavideosmedia-website",
-        "branch": "main", "message": f"Website sync: {len(text_files)} new articles",
-        "files": [{"path": f["path"], "content": f["content"]} for f in text_files],
-    }
-    with open("/tmp/sync_push.json", "w") as out:
-        js.dump(payload, out)
+    # NOTE (2026-10-17): `github call-tool --arguments-json` passes the whole
+    # payload as one argv string; on this VM the stack limit (ulimit -s 8192)
+    # makes ARG_MAX tiny, so full-page payloads die with "Argument list too
+    # long". `github push-files` reads file contents through privsep instead.
+    import tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".paths", delete=False) as pf:
+        pf.write("\0".join(f["path"] for f in text_files) + "\0")
+        paths_file = pf.name
     result = subprocess.run(
-        ["/opt/hatch/bin/github", "call-tool", "--name", "push_files",
-         "--arguments-json", open("/tmp/sync_push.json").read()],
-        capture_output=True, text=True, timeout=120)
+        ["/opt/hatch/bin/github", "push-files",
+         "--owner", "smotupally", "--repo", "manavideosmedia-website",
+         "--branch", "main",
+         "--message", f"Website sync: {len(text_files)} new articles",
+         "--source-dir", str(SITE),
+         "--paths-file", paths_file],
+        capture_output=True, text=True, timeout=600)
     print("Push result:", result.stdout[:200])
+    if result.returncode != 0:
+        print("Push stderr:", result.stderr[:500])
     return result.returncode == 0
 
 def main():
