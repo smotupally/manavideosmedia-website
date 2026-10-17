@@ -335,9 +335,9 @@ footer {
 .value p { color: var(--muted); font-size: 14.5px; }
 
 /* ---------- Page hero (inner pages) ---------- */
-.page-hero { padding: 40px 0 30px; text-align: center; border-bottom: 1px solid var(--border); background: var(--navy-2); }
-.page-hero h1 { font-size: 30px; color: #fff; }
-.page-hero p { color: var(--muted); margin-top: 8px; max-width: 600px; margin-left: auto; margin-right: auto; }
+.page-hero { padding: 24px 0 20px; text-align: center; border-bottom: 1px solid var(--border); background: var(--navy-2); }
+.page-hero h1 { font-size: 26px; color: #fff; margin: 0; }
+.page-hero p { color: var(--muted); margin: 6px auto 0; max-width: 600px; font-size: 15px; line-height: 1.5; }
 
 /* ---------- Responsive ---------- */
 @media (min-width: 640px) {
