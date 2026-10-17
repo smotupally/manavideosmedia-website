@@ -193,6 +193,7 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
 <main>
   <article class="article-page">
     <div class="container">
+      <a href="../stories.html" class="back-link">← Back to Stories</a>
       <span class="pill">{cat_label}</span>
       <h1>{headline}</h1>
       {image_html}

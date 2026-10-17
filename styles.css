@@ -614,9 +614,29 @@ body { padding-bottom: 44px; }
 }
 .reels-static .reel-embed {
   min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+.reels-static .reel-embed blockquote.instagram-media,
+.reels-static .reel-embed iframe {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  width: 100% !important;
 }
 @media (max-width: 640px) {
   .reels-static {
     grid-template-columns: 1fr;
   }
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+}
+.back-link:hover {
+  text-decoration: underline;
 }
