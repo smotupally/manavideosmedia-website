@@ -731,11 +731,12 @@ body { padding-bottom: 44px; }
   color: var(--gold, #d4af37);
 }
 
-.article-with-reel {
-  display: grid;
-  grid-template-columns: 1fr 360px;
+.article-page .container .article-with-reel {
+  display: grid !important;
+  grid-template-columns: 1fr 360px !important;
   gap: 32px;
   align-items: start;
+  width: 100%;
 }
 .reel-sidebar-sticky {
   position: sticky;
