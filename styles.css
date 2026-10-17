@@ -573,7 +573,7 @@ body { padding-bottom: 44px; }
   flex-shrink: 0; font-weight: 800; font-size: 12px;
   padding: 0 12px; letter-spacing: 1px; white-space: nowrap;
 }
-.bottom-ticker .ticker-marquee {
+.ticker-track {
   flex: 1; font-size: 13px; white-space: nowrap;
 }
 .bottom-ticker .ticker-close {
@@ -581,3 +581,22 @@ body { padding-bottom: 44px; }
   color: #fff; font-size: 14px; padding: 0 12px; cursor: pointer;
 }
 body { padding-bottom: 44px; }
+
+.ticker-track {
+  flex: 1; overflow: hidden; position: relative; height: 100%;
+}
+.ticker-inner {
+  display: inline-flex; white-space: nowrap; height: 100%; align-items: center;
+  animation: ticker-smooth 25s linear infinite;
+  will-change: transform;
+}
+.ticker-inner span {
+  padding-right: 50px; font-size: 13px;
+}
+@keyframes ticker-smooth {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-track:hover .ticker-inner {
+  animation-play-state: paused;
+}
