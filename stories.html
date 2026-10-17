@@ -89,6 +89,7 @@
         <button class="filter-btn" data-filter="politics">Politics</button>
         <button class="filter-btn" data-filter="nri">NRI Hub</button>
         <button class="filter-btn" data-filter="visa">Visa &amp; Immigration</button>
+        <button class="filter-btn refresh-btn" id="refresh-stories" title="Refresh stories" aria-label="Refresh stories">⟳ Refresh</button>
       </div>
 
       <!-- NOTE: All stories below are SAMPLE/placeholder content for launch. Replace with real published stories. -->
@@ -909,7 +910,7 @@
 <script>
 (function () {
   var buttons = document.querySelectorAll('.filter-btn');
-  var cards = document.querySelectorAll('#story-grid .card');
+  var cards = Array.prototype.slice.call(document.querySelectorAll('#story-grid .card'));
   var search = document.getElementById('story-search');
   var activeFilter = 'all';
   var grid = document.getElementById('story-grid');
@@ -966,6 +967,35 @@
     } else {
       resultCount.style.display = 'none';
     }
+  }
+
+  var refreshBtn = document.getElementById('refresh-stories');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', function() {
+      var btn = this;
+      btn.disabled = true;
+      btn.textContent = '⟳ Refreshing...';
+      fetch(window.location.pathname + '?t=' + Date.now())
+        .then(function(r) { return r.text(); })
+        .then(function(pageHtml) {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(pageHtml, 'text/html');
+          var newGrid = doc.getElementById('story-grid');
+          var oldGrid = document.getElementById('story-grid');
+          if (newGrid && oldGrid) {
+            oldGrid.innerHTML = newGrid.innerHTML;
+            // Re-collect cards and re-apply filters
+            cards = Array.prototype.slice.call(oldGrid.querySelectorAll('.card'));
+            applyFilters();
+          }
+          btn.disabled = false;
+          btn.textContent = '⟳ Refresh';
+        })
+        .catch(function() {
+          btn.disabled = false;
+          btn.textContent = '⟳ Refresh';
+        });
+    });
   }
 
   buttons.forEach(function (btn) {

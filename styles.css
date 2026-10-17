@@ -656,3 +656,17 @@ body { padding-bottom: 44px; }
   text-align: center;
   padding: 20px;
 }
+
+.refresh-btn {
+  background: var(--card-bg, #1e293b);
+  border: 1px solid var(--gold, #d4af37);
+  color: var(--gold, #d4af37);
+}
+.refresh-btn:hover:not(:disabled) {
+  background: var(--gold, #d4af37);
+  color: #0a1628;
+}
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
