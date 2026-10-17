@@ -27,6 +27,11 @@
   }
   </script>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="057a8fb0-a6cb-489c-868d-18291b14028d"></script>
+  <link rel="alternate" type="application/rss+xml" title="Mana Videos Media RSS" href="/rss.xml">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 </head>
 <body>
 
@@ -51,7 +56,7 @@
   <div class="container">
     <ul class="navlinks">
       <li><a href="index.html">Home</a></li>
-      <li><a href="stories.html">Stories</a></li>
+      <li><a href="stories.html">Stories</a></li><li><a href="archive.html">Archive</a></li>
       <li><a href="channels.html">Channels</a></li>
       <li><a href="about.html">About</a></li>
       <li><a href="contact.html" class="active">Contact</a></li>
@@ -81,7 +86,10 @@
       </div>
 
       <div class="form-wrap">
-        <form id="contact-form" action="mailto:manavideosmedia@gmail.com" method="post" enctype="text/plain">
+        <form id="contact-form" action="https://formsubmit.co/manavideosmedia@gmail.com" method="POST">
+          <input type="hidden" name="_subject" value="New message from manavideosmedia.com">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_template" value="table">
           <div class="field">
             <label for="name">Your Name</label>
             <input type="text" id="name" name="name" required placeholder="e.g. Ravi Kumar">
@@ -106,6 +114,7 @@
           </div>
           <button type="submit" class="btn btn-red" style="width:100%;">Send Message</button>
           <p style="color:var(--muted);font-size:13px;margin-top:12px;text-align:center;">This opens your email app addressed to manavideosmedia@gmail.com — nothing is stored on this site.</p>
+                  <p class="form-note">We usually reply within 24 hours.</p>
         </form>
       </div>
     </div>
