@@ -407,7 +407,7 @@ footer {
 .share-btn.copy { background: var(--gold); color: #0a1628; }
 
 .article-page .meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--muted); font-size: 14px; margin: 16px 0; }
-.article-page .meta span + span::before { content: "•"; margin: 0 8px; color: var(--gold); }
+.article-page .meta .sep { color: var(--gold); margin: 0 4px; }
 .card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* ---------- Reel carousel ---------- */
