@@ -587,8 +587,10 @@ body { padding-bottom: 44px; }
 }
 .ticker-inner {
   display: inline-flex; white-space: nowrap; height: 100%; align-items: center;
-  animation: ticker-smooth 25s linear infinite;
+  animation: ticker-smooth 45s linear infinite;
   will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 .ticker-inner span {
   padding-right: 50px; font-size: 13px;
@@ -597,6 +599,8 @@ body { padding-bottom: 44px; }
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
-.ticker-track:hover .ticker-inner {
-  animation-play-state: paused;
+@media (hover: hover) {
+  .ticker-track:hover .ticker-inner {
+    animation-play-state: paused;
+  }
 }
