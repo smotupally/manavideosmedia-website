@@ -975,6 +975,13 @@
       var btn = this;
       btn.disabled = true;
       btn.textContent = '⟳ Refreshing...';
+      // Clear filters so refresh shows all fresh stories
+      if (dateInput) dateInput.value = '';
+      if (search) search.value = '';
+      buttons.forEach(function(b) { b.classList.remove('active'); });
+      var allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+      if (allBtn) allBtn.classList.add('active');
+      activeFilter = 'all';
       fetch(window.location.pathname + '?t=' + Date.now())
         .then(function(r) { return r.text(); })
         .then(function(pageHtml) {
