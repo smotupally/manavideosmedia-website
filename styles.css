@@ -62,15 +62,15 @@ a:hover { color: var(--gold); }
   text-align: center;
   border-bottom: 3px solid var(--gold);
 }
-,
 .brandbar .logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 20px;
   padding: 14px 0 6px;
   line-height: 1.2;
 }
+,
 .brandbar .logo .brand-text {
   font-size: 32px;
   font-weight: 800;
@@ -356,14 +356,6 @@ footer {
   .values { grid-template-columns: repeat(3, 1fr); }
   .foot-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
   ,
-.brandbar .logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 14px 0 6px;
-  line-height: 1.2;
-}
 .brandbar .logo .brand-text {
   font-size: 32px;
   font-weight: 800;
