@@ -394,3 +394,12 @@ footer {
 @media (max-width: 640px) {
   .search-wrap input[type="search"] { font-size: 16px; }
 }
+
+.share-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 28px 0 8px; padding-top: 20px; border-top: 1px solid var(--gold); }
+.share-label { font-weight: 700; color: #fff; margin-right: 4px; }
+.share-btn { display: inline-block; padding: 9px 18px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none; cursor: pointer; border: none; transition: opacity .15s; }
+.share-btn:hover { opacity: .85; }
+.share-btn.whatsapp { background: #25d366; color: #fff; }
+.share-btn.x { background: #000; color: #fff; border: 1px solid #444; }
+.share-btn.facebook { background: #1877f2; color: #fff; }
+.share-btn.copy { background: var(--gold); color: #0a1628; }
