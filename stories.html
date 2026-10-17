@@ -912,6 +912,7 @@
   var search = document.getElementById('story-search');
   var activeFilter = 'all';
   var grid = document.getElementById('story-grid');
+  if (!grid) return;
 
   var noResults = document.createElement('p');
   noResults.className = 'no-results';
