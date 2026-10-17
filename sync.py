@@ -448,22 +448,21 @@ def update_reels():
     # Update index.html
     ip = SITE / "index.html"
     html = ip.read_text()
-    # Build new reels HTML as custom cards
+    # Build new reels HTML as clickable cards that load IG embed inline
     reels_html = ""
     for url in latest:
         if not url.endswith("/"):
             url += "/"
-        # Extract date info from URL if possible, else generic
-        reels_html += f"""          <a href="{url}" target="_blank" rel="noopener" class="reel-card">
+        reels_html += f"""          <div class="reel-card" data-reel="{url}" onclick="loadReel(this)">
             <div class="reel-thumb">
-              <div class="reel-play">▶</div>
+              <div class="reel-play">&#9654;</div>
               <div class="reel-badge">REEL</div>
             </div>
             <div class="reel-info">
               <div class="reel-title">USA Telugu News Roundup</div>
-              <div class="reel-sub">Watch on Instagram →</div>
+              <div class="reel-sub">Tap to watch</div>
             </div>
-          </a>
+          </div>
 """
     # Replace the reels-static content
     new_html = re.sub(

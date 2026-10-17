@@ -182,36 +182,36 @@
         <a class="more" href="https://www.instagram.com/manavideos_media" target="_blank" rel="noopener">View all →</a>
       </div>
       <div class="reels-static">
-          <a href="https://www.instagram.com/reel/DemATb3jGaV/" target="_blank" rel="noopener" class="reel-card">
+          <div class="reel-card" data-reel="https://www.instagram.com/reel/DemATb3jGaV/" onclick="loadReel(this)">
             <div class="reel-thumb">
-              <div class="reel-play">▶</div>
+              <div class="reel-play">&#9654;</div>
               <div class="reel-badge">REEL</div>
             </div>
             <div class="reel-info">
               <div class="reel-title">USA Telugu News Roundup</div>
-              <div class="reel-sub">Morning Edition • Oct 17</div>
+              <div class="reel-sub">Morning Edition - Oct 17</div>
             </div>
-          </a>
-          <a href="https://www.instagram.com/reel/Dek2lqTDyV8/" target="_blank" rel="noopener" class="reel-card">
+          </div>
+          <div class="reel-card" data-reel="https://www.instagram.com/reel/Dek2lqTDyV8/" onclick="loadReel(this)">
             <div class="reel-thumb">
-              <div class="reel-play">▶</div>
+              <div class="reel-play">&#9654;</div>
               <div class="reel-badge">REEL</div>
             </div>
             <div class="reel-info">
               <div class="reel-title">USA Telugu News Roundup</div>
-              <div class="reel-sub">Evening Edition • Oct 16</div>
+              <div class="reel-sub">Evening Edition - Oct 16</div>
             </div>
-          </a>
-          <a href="https://www.instagram.com/reel/Dejf0QVD5v5/" target="_blank" rel="noopener" class="reel-card">
+          </div>
+          <div class="reel-card" data-reel="https://www.instagram.com/reel/Dejf0QVD5v5/" onclick="loadReel(this)">
             <div class="reel-thumb">
-              <div class="reel-play">▶</div>
+              <div class="reel-play">&#9654;</div>
               <div class="reel-badge">REEL</div>
             </div>
             <div class="reel-info">
               <div class="reel-title">USA Telugu News Roundup</div>
-              <div class="reel-sub">Morning Edition • Oct 16</div>
+              <div class="reel-sub">Morning Edition - Oct 16</div>
             </div>
-          </a>
+          </div>
       </div>
       <p class="reel-note">New Telugu news roundups every morning &amp; evening at 6 AM / 6 PM CT<br><span lang="te" style="white-space:nowrap">ప్రతిరోజూ ఉదయం, సాయంత్రం</span></p>
     </div>
@@ -555,6 +555,24 @@
     startTicker();
   }
 })();
+</script>
+
+<script>
+function loadReel(el) {
+  var url = el.getAttribute('data-reel');
+  el.innerHTML = '<blockquote class="instagram-media" data-instgrm-permalink="' + url + '" data-instgrm-version="14" style="margin:0"></blockquote>';
+  el.onclick = null;
+  el.style.cursor = 'default';
+  // Load IG embed script if not already loaded
+  if (!window.instgrm) {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.instagram.com/embed.js';
+    document.body.appendChild(s);
+  } else {
+    window.instgrm.Embeds.process();
+  }
+}
 </script>
 </body>
 </html>
