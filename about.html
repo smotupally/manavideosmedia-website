@@ -151,5 +151,16 @@
     <div class="copy">© 2026 Mana Videos Media • manavideosmedia.com • All rights reserved.</div>
   </div>
 </footer>
+<script>
+(function () {
+  var teDays = ['ఆదివారం','సోమవారం','మంగళవారం','బుధవారం','గురువారం','శుక్రవారం','శనివారం'];
+  var now = new Date();
+  var opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  var dateStr = now.toLocaleDateString('en-US', opts) + ' | ' + teDays[now.getDay()];
+  document.querySelectorAll('.topbar .date').forEach(function (el) {
+    el.textContent = dateStr;
+  });
+})();
+</script>
 </body>
 </html>
