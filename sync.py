@@ -496,6 +496,29 @@ def update_homepage_stories():
         print(f"Updated homepage Latest Stories: {len(cards)} articles")
 
 
+def update_homepage_categories():
+    """Update homepage category sections with 3 latest per category."""
+    import re
+    sp = SITE / "stories.html"
+    html = sp.read_text()
+    full_cards = re.findall(r'(<article class="card" data-category="([^"]+)"[^>]*>.*?</article>)', html, re.DOTALL)
+    by_cat = {"community": [], "politics": [], "nri": [], "visa": []}
+    for full, cat in full_cards:
+        if cat in by_cat and len(by_cat[cat]) < 3:
+            by_cat[cat].append(full)
+    ip = SITE / "index.html"
+    ihtml = ip.read_text()
+    for cat_key in by_cat:
+        cards_html = "\n".join(["        " + c for c in by_cat[cat_key]])
+        # Replace cards in this category section
+        pattern = rf'(<section class="section" id="cat-{cat_key}">.*?<div class="grid">\n)(.*?)(\n      </div>)'
+        m = re.search(pattern, ihtml, re.DOTALL)
+        if m:
+            ihtml = ihtml[:m.start(2)] + cards_html + ihtml[m.end(2):]
+    ip.write_text(ihtml)
+    print(f"Updated homepage category sections")
+
+
 def update_listings(new_articles):
     """Prepend new cards to stories.html and update sitemap."""
     if not new_articles:
@@ -545,6 +568,7 @@ def update_listings(new_articles):
     update_ticker()
     update_reels()
     update_homepage_stories()
+    update_homepage_categories()
 
 
 def rebuild_rss():
