@@ -10,6 +10,11 @@
   <meta property="og:title" content="Channels — Mana Videos Media">
   <meta property="og:description" content="The full Mana Videos family of Instagram channels.">
   <meta property="og:url" content="https://manavideosmedia.com/channels.html">
+    <meta property="og:image" content="https://manavideosmedia.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://manavideosmedia.com/og-image.png">
   <meta property="og:site_name" content="Mana Videos Media">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,6 +32,11 @@
   }
   </script>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="057a8fb0-a6cb-489c-868d-18291b14028d"></script>
+  <link rel="alternate" type="application/rss+xml" title="Mana Videos Media RSS" href="/rss.xml">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 </head>
 <body>
 
@@ -51,7 +61,7 @@
   <div class="container">
     <ul class="navlinks">
       <li><a href="index.html">Home</a></li>
-      <li><a href="stories.html">Stories</a></li>
+      <li><a href="stories.html">Stories</a></li><li><a href="archive.html">Archive</a></li>
       <li><a href="channels.html" class="active">Channels</a></li>
       <li><a href="about.html">About</a></li>
       <li><a href="contact.html">Contact</a></li>
@@ -203,5 +213,52 @@
   });
 })();
 </script>
+
+
+
+<div class="bottom-ticker" id="news-ticker">
+  <span class="ticker-label">📢 LATEST</span>
+  <marquee class="ticker-marquee" behavior="scroll" direction="left" scrollamount="4">Microsoft President Brad Smith has hit back at the Trump administration over the • Rest in peace, Bharath Kumar Pulipati. • RUBIO TO VISIT INDIA — OCT 17–22 • 12-MONTH WAIT FOR US TOURIST VISA IN HYDERABAD • OCT 18 DEADLINE INDIA FACES UP TO 100 US TARIFFS! • TRUMP ANNOUNCES RUSSIA-UKRAINE ENERGY CEASEFIRE! • US SANCTIONS 2 MUMBAI FIRMS  5 INDIANS OVER ALLEGED IRAN OIL TRADE! • PRESIDENT TRUMP HONORS HYDERABAD'S SATYA NADELLA WITH AMERICA'S TOP TECH MEDAL!</marquee>
+  <button class="ticker-close" onclick="document.getElementById('news-ticker').style.display='none'">✕</button>
+</div>
+
+<script>
+(function() {
+  // 1. Reading progress bar
+  var progress = document.createElement('div');
+  progress.className = 'read-progress';
+  document.body.appendChild(progress);
+  window.addEventListener('scroll', function() {
+    var h = document.documentElement;
+    var pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    progress.style.width = pct + '%';
+  });
+
+  // 2. Scroll fade-in
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.card, .hero, section h2').forEach(function(el) {
+    el.classList.add('fade-in');
+    observer.observe(el);
+  });
+
+  // 3. Back to top
+  var btt = document.createElement('button');
+  btt.className = 'back-to-top';
+  btt.innerHTML = '↑';
+  btt.setAttribute('aria-label', 'Back to top');
+  document.body.appendChild(btt);
+  window.addEventListener('scroll', function() {
+    btt.classList.toggle('show', window.scrollY > 400);
+  });
+  btt.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+
 </body>
 </html>
