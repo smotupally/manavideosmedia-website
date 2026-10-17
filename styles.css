@@ -596,11 +596,13 @@ body { padding-bottom: 44px; }
   white-space: nowrap;
 }
 .ticker-content {
-  display: inline-block;
+  display: inline-block !important;
   padding-left: 100%;
   animation: ticker-scroll 30s linear infinite;
   font-size: 13px;
   color: #fff;
+  white-space: nowrap !important;
+  word-wrap: normal !important;
 }
 @keyframes ticker-scroll {
   0% { transform: translateX(0); }
