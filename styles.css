@@ -573,9 +573,7 @@ body { padding-bottom: 44px; }
   flex-shrink: 0; font-weight: 800; font-size: 12px;
   padding: 0 12px; letter-spacing: 1px; white-space: nowrap;
 }
-.ticker-track {
-  flex: 1; font-size: 13px; white-space: nowrap;
-}
+
 .bottom-ticker .ticker-close {
   flex-shrink: 0; background: none; border: none;
   color: #fff; font-size: 14px; padding: 0 12px; cursor: pointer;
@@ -594,6 +592,8 @@ body { padding-bottom: 44px; }
 }
 .ticker-inner span {
   padding-right: 50px; font-size: 13px;
+  flex-shrink: 0;
+  display: inline-block;
 }
 @keyframes ticker-smooth {
   0% { transform: translateX(0); }
