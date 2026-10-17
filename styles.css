@@ -580,27 +580,29 @@ body { padding-bottom: 44px; }
 }
 body { padding-bottom: 44px; }
 
-.ticker-track {
-  flex: 1; overflow: hidden; position: relative; height: 100%;
-}
-.ticker-inner {
-  display: inline-flex; white-space: nowrap; height: 100%; align-items: center;
-  animation: ticker-smooth 45s linear infinite;
-  will-change: transform;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-}
-.ticker-inner span {
-  padding-right: 50px; font-size: 13px;
-  flex-shrink: 0;
-  display: inline-block;
-}
-@keyframes ticker-smooth {
-  0% { transform: translateX(0); }
+
+
+
+
   100% { transform: translateX(-50%); }
 }
 @media (hover: hover) {
-  .ticker-track:hover .ticker-inner {
-    animation-play-state: paused;
-  }
+  .ticker-track:hover 
+}
+
+.ticker-scroll {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-content {
+  display: inline-block;
+  padding-left: 100%;
+  animation: ticker-scroll 30s linear infinite;
+  font-size: 13px;
+  color: #fff;
+}
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
 }
