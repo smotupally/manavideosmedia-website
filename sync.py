@@ -566,7 +566,7 @@ def rebuild_rss():
         else:
             m2 = re.search(r'<span>([0-9]{2})/([0-9]{2})/(2026)</span>', content)
             if m2:
-                date_str = f"{m2.group(3)}-{m2.group(1)}-{m2.group(2)}"
+                date_str = f"{m2.group(1)}/{m2.group(2)}/{m2.group(3)}"
         if not date_str:
             continue
         try:
