@@ -448,20 +448,13 @@ def update_reels():
     # Update index.html
     ip = SITE / "index.html"
     html = ip.read_text()
-    # Build new reels HTML as clickable cards that load IG embed inline
+    # Build new reels HTML as direct IG embeds (show by default)
     reels_html = ""
     for url in latest:
         if not url.endswith("/"):
             url += "/"
-        reels_html += f"""          <div class="reel-card" data-reel="{url}" onclick="loadReel(this)">
-            <div class="reel-thumb">
-              <div class="reel-play">&#9654;</div>
-              <div class="reel-badge">REEL</div>
-            </div>
-            <div class="reel-info">
-              <div class="reel-title">USA Telugu News Roundup</div>
-              <div class="reel-sub">Tap to watch</div>
-            </div>
+        reels_html += f"""          <div class="reel-embed">
+            <blockquote class="instagram-media" data-instgrm-permalink="{url}" data-instgrm-version="14" style="margin:0"></blockquote>
           </div>
 """
     # Replace the reels-static content
