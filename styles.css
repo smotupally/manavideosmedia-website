@@ -670,3 +670,63 @@ body { padding-bottom: 44px; }
   opacity: 0.6;
   cursor: wait;
 }
+
+.reel-card {
+  display: block;
+  background: var(--card-bg, #1e293b);
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s;
+  border: 1px solid var(--border, #334155);
+}
+.reel-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold, #d4af37);
+}
+.reel-thumb {
+  position: relative;
+  aspect-ratio: 9/12;
+  background: linear-gradient(135deg, #0a1628 0%, #1e293b 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.reel-play {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.9);
+  color: #0a1628;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  padding-left: 4px;
+}
+.reel-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #e11d48;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+.reel-info {
+  padding: 16px;
+}
+.reel-title {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 4px;
+  color: white;
+}
+.reel-sub {
+  font-size: 13px;
+  color: var(--gold, #d4af37);
+}

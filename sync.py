@@ -448,15 +448,22 @@ def update_reels():
     # Update index.html
     ip = SITE / "index.html"
     html = ip.read_text()
-    # Build new reels HTML
+    # Build new reels HTML as custom cards
     reels_html = ""
     for url in latest:
-        # Ensure trailing slash
         if not url.endswith("/"):
             url += "/"
-        reels_html += f"""          <div class="reel-embed">
-            <blockquote class="instagram-media" data-instgrm-permalink="{url}" data-instgrm-version="14"></blockquote>
-          </div>
+        # Extract date info from URL if possible, else generic
+        reels_html += f"""          <a href="{url}" target="_blank" rel="noopener" class="reel-card">
+            <div class="reel-thumb">
+              <div class="reel-play">▶</div>
+              <div class="reel-badge">REEL</div>
+            </div>
+            <div class="reel-info">
+              <div class="reel-title">USA Telugu News Roundup</div>
+              <div class="reel-sub">Watch on Instagram →</div>
+            </div>
+          </a>
 """
     # Replace the reels-static content
     new_html = re.sub(
