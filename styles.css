@@ -446,12 +446,12 @@ footer {
 .archive-list a { color: var(--text); text-decoration: none; }
 .archive-list a:hover { color: var(--gold); }
 
-.bottom-ticker { position: fixed; bottom: 0; left: 0; right: 0; background: #c0392b; color: #fff; display: flex; align-items: center; padding: 10px 16px; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.3); }
-.ticker-label { font-weight: 800; font-size: 13px; white-space: nowrap; margin-right: 16px; letter-spacing: 1px; }
-.ticker-scroll { flex: 1; overflow: hidden; white-space: nowrap; }
-.ticker-scroll span { display: inline-block; animation: ticker-scroll 40s linear infinite; font-size: 14px; }
-.ticker-scroll:hover span { animation-play-state: paused; }
+.bottom-ticker { position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; background: #c0392b !important; color: #fff !important; display: flex !important; align-items: center !important; padding: 10px 16px !important; z-index: 9999 !important; box-shadow: 0 -2px 10px rgba(0,0,0,0.3) !important; }
+.ticker-label { font-weight: 800 !important; font-size: 13px !important; white-space: nowrap !important; margin-right: 16px !important; letter-spacing: 1px !important; flex-shrink: 0 !important; }
+.ticker-scroll { flex: 1 !important; overflow: hidden !important; white-space: nowrap !important; }
+.ticker-scroll span { display: inline-block !important; animation: ticker-scroll 40s linear infinite !important; font-size: 14px !important; white-space: nowrap !important; }
+.ticker-scroll:hover span { animation-play-state: paused !important; }
 @keyframes ticker-scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-.ticker-close { background: none; border: none; color: #fff; font-size: 16px; cursor: pointer; margin-left: 12px; opacity: 0.7; }
-.ticker-close:hover { opacity: 1; }
-body { padding-bottom: 44px; }
+.ticker-close { background: none !important; border: none !important; color: #fff !important; font-size: 16px !important; cursor: pointer !important; margin-left: 12px !important; opacity: 0.7 !important; flex-shrink: 0 !important; }
+.ticker-close:hover { opacity: 1 !important; }
+body { padding-bottom: 44px !important; }
