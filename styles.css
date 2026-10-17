@@ -476,7 +476,7 @@ footer {
 
 
 
- 100% { transform: translateX(-50%); } }
+ 100% { transform: translateX(-50%); }
 
 
 body { padding-bottom: 44px !important; }
@@ -547,15 +547,6 @@ body { padding-bottom: 44px !important; }
 
 
 
-/* Bottom news ticker - robust version */
-
-
-
-
-
-  100% { left: -100%; }
-}
-
 body { padding-bottom: 44px; }
 @media (max-width: 640px) {
   
@@ -582,10 +573,6 @@ body { padding-bottom: 44px; }
 
 
 
-
-
-  100% { transform: translateX(-50%); }
-}
 @media (hover: hover) {
   .ticker-track:hover 
 }
@@ -601,9 +588,6 @@ body { padding-bottom: 44px; }
   font-size: 13px;
   color: #fff;
   will-change: transform;
-}
-
-  100% { transform: translateX(-100%); }
 }
 
 /* Static 3-reel grid (no carousel) */
