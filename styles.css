@@ -415,7 +415,8 @@ footer {
 
 /* ---------- Reel carousel ---------- */
 .reel-carousel { position: relative; display: flex; align-items: center; gap: 12px; }
-.reel-carousel .reels { display: flex; overflow: hidden; flex: 1; transition: transform 0.4s ease; }
+.reel-carousel .reel-viewport { overflow: hidden; flex: 1; }
+.reel-carousel .reels { display: flex; transition: transform 0.4s ease; }
 .reel-carousel .reel-embed { flex: 0 0 33.333%; min-width: 0; padding: 0 8px; box-sizing: border-box; }
 .carousel-btn {
   flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
@@ -510,3 +511,14 @@ body { padding-bottom: 44px !important; }
 
 /* 5. Animated stats */
 .stat-num { font-size: 32px; font-weight: 800; color: var(--gold); }
+
+/* Currency converter */
+.converter { padding: 32px 0; text-align: center; }
+.converter h2 { margin-bottom: 16px; }
+.conv-box { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.conv-box input { background: var(--navy-3); border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 8px; font-size: 18px; width: 140px; text-align: center; }
+.conv-eq { font-size: 24px; color: var(--gold); }
+.conv-result { font-size: 28px; font-weight: 800; color: var(--gold); }
+.conv-note { color: var(--muted); font-size: 12px; margin-top: 8px; }
+
+

@@ -96,6 +96,26 @@
     <div class="container">
       <div class="section-head">
         
+
+
+
+<script>
+(function() {
+  var rate = 83.50;
+  // Try to fetch live rate
+  fetch('https://open.er-api.com/v6/latest/USD').then(function(r) { return r.json(); })
+    .then(function(d) { if (d.rates && d.rates.INR) { rate = d.rates.INR; document.getElementById('usd-rate').textContent = rate.toFixed(2); update(); } })
+    .catch(function() {});
+  function update() {
+    var usd = parseFloat(document.getElementById('usd-input').value) || 0;
+    document.getElementById('inr-output').textContent = '₹' + (usd * rate).toLocaleString('en-IN', {maximumFractionDigits: 0});
+  }
+  document.getElementById('usd-input').addEventListener('input', update);
+  update();
+})();
+</script>
+
+
 <h2>Latest Stories</h2>
         <a class="more" href="stories.html">View all →</a>
       </div>
@@ -172,7 +192,7 @@
       </div>
       <div class="reel-carousel">
         <button class="carousel-btn prev" onclick="moveReels(-1)" aria-label="Previous reels">&#8592;</button>
-        <div class="reels" id="reel-track">
+        <div class="reel-viewport"><div class="reels" id="reel-track">
           <div class="reel-embed">
             <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/Dek2lqTDyV8/" data-instgrm-version="14"></blockquote>
           </div>
@@ -196,11 +216,11 @@
       </div>
       <script>
       let reelIndex = 0;
+      var reelIndex = 0;
       function moveReels(dir) {
         const track = document.getElementById('reel-track');
-        const total = 6, visible = 3;
         reelIndex = (reelIndex + dir + 2) % 2; // 0 or 1 (two pages of 3)
-        track.style.transform = `translateX(-${reelIndex * 100}%)`;
+        track.style.transform = 'translateX(-' + (reelIndex * 50) + '%)';
       }
       </script>
       <p class="reel-note">New Telugu news roundups every morning &amp; evening at 6 AM / 6 PM CT<br><span lang="te" style="white-space:nowrap">ప్రతిరోజూ ఉదయం, సాయంత్రం</span></p>
