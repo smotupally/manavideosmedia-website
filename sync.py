@@ -627,7 +627,38 @@ def update_listings(new_articles):
 """
     html = html.replace('<div class="grid" id="story-grid">',
                         '<div class="grid" id="story-grid">\n' + cards, 1)
+    # Sort all cards newest-first and dedupe (prevents sort drift)
+    import re as _re
+    from datetime import datetime as _dt
+    _cards = _re.findall(r'<article class="card"[^>]*>.*?</article>', html, _re.DOTALL)
+    def _d(c):
+        m = _re.search(r'(\d{2}/\d{2}/\d{4})', c)
+        if m:
+            try: return _dt.strptime(m.group(1), '%m/%d/%Y')
+            except: pass
+        return _dt.min
+    _seen, _unique = set(), []
+    for c in sorted(_cards, key=_d, reverse=True):
+        tm = _re.search(r'<h3[^>]*>(.*?)</h3>', c, _re.DOTALL)
+        t = _re.sub(r'<[^>]+>', '', tm.group(1)).strip() if tm else ""
+        if t not in _seen:
+            _seen.add(t)
+            _unique.append(c)
+    gs = html.find('id="story-grid"')
+    gs = html.rfind('<div', 0, gs)
+    depth, pos = 0, gs
+    while pos < len(html):
+        if html[pos:pos+4] == '<div': depth += 1
+        elif html[pos:pos+6] == '</div>':
+            depth -= 1
+            if depth == 0:
+                ge = pos + 6
+                break
+        pos += 1
+    ot = html[gs:html.find('>', gs)+1]
+    html = html[:gs] + ot + '\n' + '\n'.join(_unique) + '\n</div>' + html[ge:]
     sp.write_text(html)
+    print(f"Sorted {len(_unique)} cards newest-first")
 
     # Update sitemap.xml
     smp = SITE / "sitemap.xml"
