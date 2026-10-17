@@ -730,3 +730,34 @@ body { padding-bottom: 44px; }
   font-size: 13px;
   color: var(--gold, #d4af37);
 }
+
+.article-with-reel {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 32px;
+  align-items: start;
+}
+.reel-sidebar-sticky {
+  position: sticky;
+  top: 20px;
+}
+.reel-sidebar h3 {
+  color: var(--gold, #d4af37);
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.reel-sidebar .instagram-media {
+  min-width: 320px !important;
+  max-width: 360px !important;
+}
+@media (max-width: 900px) {
+  .article-with-reel {
+    grid-template-columns: 1fr;
+  }
+  .reel-sidebar {
+    order: -1;
+  }
+  .reel-sidebar-sticky {
+    position: static;
+  }
+}
