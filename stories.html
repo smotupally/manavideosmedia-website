@@ -81,8 +81,7 @@
     <div class="container">
       <div class="search-wrap">
         <input type="search" id="story-search" placeholder="Search stories… (try H-1B, Bathukamma, Dallas)" aria-label="Search stories">
-        <input type="date" id="story-date" aria-label="Filter by date" title="Filter by date">
-        <button id="clear-date" aria-label="Clear date filter" title="Clear date" style="display:none;">✕</button>
+        <input type="date" id="story-date" aria-label="Filter by date" title="Pick a date to filter stories">
       </div>
       <div class="filters" role="tablist" aria-label="Filter stories by category">
         <button class="filter-btn active" data-filter="all">All</button>
@@ -928,7 +927,6 @@
   grid.parentNode.insertBefore(resultCount, grid);
 
   var dateInput = document.getElementById('story-date');
-  var clearDate = document.getElementById('clear-date');
 
   function normalizeDate(s) {
     // Handle YYYY-MM-DD and MM/DD/YYYY
@@ -952,6 +950,11 @@
       var text = (card.textContent || '').toLowerCase();
       var qOk = !q || text.indexOf(q) !== -1;
       var show = catOk && qOk;
+      if (show && selDate) {
+        var metaEl = card.querySelector('.meta span');
+        var cardDate = metaEl ? normalizeDate(metaEl.textContent) : '';
+        if (cardDate !== selDate) show = false;
+      }
       card.style.display = show ? '' : 'none';
       if (show) visible++;
     });
@@ -974,19 +977,7 @@
     });
   });
   search.addEventListener('input', applyFilters);
-  if (dateInput) {
-    dateInput.addEventListener('change', function() {
-      clearDate.style.display = this.value ? '' : 'none';
-      applyFilters();
-    });
-  }
-  if (clearDate) {
-    clearDate.addEventListener('click', function() {
-      dateInput.value = '';
-      this.style.display = 'none';
-      applyFilters();
-    });
-  }
+  if (dateInput) dateInput.addEventListener('change', applyFilters);
 })();
 </script>
 <script>
