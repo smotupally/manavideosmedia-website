@@ -449,12 +449,21 @@ def rebuild_rss():
     items = []
     for fp in sorted((ARTICLES_DIR).glob("*.html"), reverse=True):
         content = fp.read_text()
-        m = re.search(r'<span>(2026-[0-9-]+)</span>', content)
         h = re.search(r'<h1>([^<]+)</h1>', content)
-        if not (m and h):
+        if not h:
             continue
-        date_str = m.group(1)
         title = re.sub(r'<[^>]+>', '', h.group(1))
+        # Try YYYY-MM-DD first, then MM/DD/YYYY
+        date_str = None
+        m = re.search(r'<span>(2026-[0-9-]+)</span>', content)
+        if m:
+            date_str = m.group(1)
+        else:
+            m2 = re.search(r'<span>([0-9]{2})/([0-9]{2})/(2026)</span>', content)
+            if m2:
+                date_str = f"{m2.group(3)}-{m2.group(1)}-{m2.group(2)}"
+        if not date_str:
+            continue
         try:
             from datetime import datetime as dt
             pubdate = dt.strptime(date_str, '%Y-%m-%d').strftime('%a, %d %b %Y 00:00:00 +0000')
