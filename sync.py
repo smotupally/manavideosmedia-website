@@ -427,6 +427,50 @@ def update_ticker():
     print(f"Updated ticker with {len(headlines)} headlines")
 
 
+def update_reels():
+    """Update homepage Latest Reels with 3 most recent published reels."""
+    import re
+    reels = []
+    for run_dir in REEL_DIR.glob("run_*"):
+        url = get_reel_url(run_dir)
+        if not url:
+            continue
+        # Extract date from run_id like run_20261017_am
+        m = re.search(r'run_(\d{8})_(am|pm)', run_dir.name)
+        if m:
+            date_key = m.group(1) + ("1" if m.group(2) == "am" else "2")
+            reels.append((date_key, url))
+    # Sort newest first, take 3
+    reels.sort(reverse=True)
+    latest = [url for _, url in reels[:3]]
+    if len(latest) < 3:
+        return
+    # Update index.html
+    ip = SITE / "index.html"
+    html = ip.read_text()
+    # Build new reels HTML
+    reels_html = ""
+    for url in latest:
+        # Ensure trailing slash
+        if not url.endswith("/"):
+            url += "/"
+        reels_html += f"""          <div class="reel-embed">
+            <blockquote class="instagram-media" data-instgrm-permalink="{url}" data-instgrm-version="14"></blockquote>
+          </div>
+"""
+    # Replace the reels-static content
+    new_html = re.sub(
+        r'(<div class="reels-static">\n).*?(\n        </div>)',
+        lambda m: m.group(1) + reels_html.rstrip("\n") + m.group(2),
+        html,
+        count=1,
+        flags=re.DOTALL
+    )
+    if new_html != html:
+        ip.write_text(new_html)
+        print(f"Updated homepage reels: {len(latest)} latest")
+
+
 def update_listings(new_articles):
     """Prepend new cards to stories.html and update sitemap."""
     if not new_articles:
@@ -474,6 +518,7 @@ def update_listings(new_articles):
     smp.write_text(sm)
     print(f"Updated listings with {len(new_articles)} new articles")
     update_ticker()
+    update_reels()
 
 
 def rebuild_rss():
