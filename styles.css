@@ -614,14 +614,6 @@ body { padding-bottom: 44px; }
 }
 .reels-static .reel-embed {
   min-width: 0;
-  max-width: 100%;
-  overflow: hidden;
-}
-.reels-static .reel-embed blockquote.instagram-media,
-.reels-static .reel-embed iframe {
-  max-width: 100% !important;
-  min-width: 0 !important;
-  width: 100% !important;
 }
 @media (max-width: 640px) {
   .reels-static {
