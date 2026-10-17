@@ -435,3 +435,13 @@ footer {
 
 .share-wrap { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 20px 0; }
 .share-wrap .share-label { font-weight: 700; margin-right: 8px; }
+
+.archive-month { margin-bottom: 32px; }
+.archive-month h2 { font-size: 22px; margin-bottom: 12px; color: #fff; }
+.archive-month .count { color: var(--muted); font-size: 15px; font-weight: 400; }
+.archive-list { list-style: none; padding: 0; }
+.archive-list li { padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; gap: 16px; align-items: baseline; }
+.archive-list li:last-child { border-bottom: none; }
+.archive-date { color: var(--muted); font-size: 13px; min-width: 90px; }
+.archive-list a { color: var(--text); text-decoration: none; }
+.archive-list a:hover { color: var(--gold); }
