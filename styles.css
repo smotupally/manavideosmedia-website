@@ -616,3 +616,29 @@ body { padding-bottom: 44px; }
 .back-link:hover {
   text-decoration: underline;
 }
+
+.search-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.search-wrap input[type="date"] {
+  padding: 10px 12px;
+  border: 1px solid var(--border, #334155);
+  border-radius: 8px;
+  background: var(--card-bg, #1e293b);
+  color: inherit;
+  font-size: 14px;
+}
+#clear-date {
+  background: none;
+  border: 1px solid var(--border, #334155);
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: inherit;
+  font-size: 14px;
+}
+#clear-date:hover {
+  background: var(--hover-bg, #334155);
+}

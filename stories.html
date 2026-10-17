@@ -81,6 +81,8 @@
     <div class="container">
       <div class="search-wrap">
         <input type="search" id="story-search" placeholder="Search stories… (try H-1B, Bathukamma, Dallas)" aria-label="Search stories">
+        <input type="date" id="story-date" aria-label="Filter by date" title="Filter by date">
+        <button id="clear-date" aria-label="Clear date filter" title="Clear date" style="display:none;">✕</button>
       </div>
       <div class="filters" role="tablist" aria-label="Filter stories by category">
         <button class="filter-btn active" data-filter="all">All</button>
@@ -925,8 +927,25 @@
   resultCount.style.cssText = 'color:var(--muted);font-size:13px;margin:8px 0;display:none;';
   grid.parentNode.insertBefore(resultCount, grid);
 
+  var dateInput = document.getElementById('story-date');
+  var clearDate = document.getElementById('clear-date');
+
+  function normalizeDate(s) {
+    // Handle YYYY-MM-DD and MM/DD/YYYY
+    s = s.trim();
+    var m1 = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (m1) return s;
+    var m2 = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m2) {
+      var mm = m2[1].padStart(2, '0'), dd = m2[2].padStart(2, '0');
+      return m2[3] + '-' + mm + '-' + dd;
+    }
+    return '';
+  }
+
   function applyFilters() {
     var q = (search.value || '').trim().toLowerCase();
+    var selDate = dateInput ? dateInput.value : '';
     var visible = 0;
     cards.forEach(function (card) {
       var catOk = (activeFilter === 'all') || (card.getAttribute('data-category') === activeFilter);
@@ -955,6 +974,19 @@
     });
   });
   search.addEventListener('input', applyFilters);
+  if (dateInput) {
+    dateInput.addEventListener('change', function() {
+      clearDate.style.display = this.value ? '' : 'none';
+      applyFilters();
+    });
+  }
+  if (clearDate) {
+    clearDate.addEventListener('click', function() {
+      dateInput.value = '';
+      this.style.display = 'none';
+      applyFilters();
+    });
+  }
 })();
 </script>
 <script>
