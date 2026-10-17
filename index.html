@@ -99,21 +99,7 @@
 
 
 
-<script>
-(function() {
-  var rate = 83.50;
-  // Try to fetch live rate
-  fetch('https://open.er-api.com/v6/latest/USD').then(function(r) { return r.json(); })
-    .then(function(d) { if (d.rates && d.rates.INR) { rate = d.rates.INR; document.getElementById('usd-rate').textContent = rate.toFixed(2); update(); } })
-    .catch(function() {});
-  function update() {
-    var usd = parseFloat(document.getElementById('usd-input').value) || 0;
-    document.getElementById('inr-output').textContent = '₹' + (usd * rate).toLocaleString('en-IN', {maximumFractionDigits: 0});
-  }
-  document.getElementById('usd-input').addEventListener('input', update);
-  update();
-})();
-</script>
+
 
 
 <h2>Latest Stories</h2>
