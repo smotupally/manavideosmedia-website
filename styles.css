@@ -642,3 +642,17 @@ body { padding-bottom: 44px; }
 #clear-date:hover {
   background: var(--hover-bg, #334155);
 }
+
+.thumb-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  background: var(--card-bg, #1e293b);
+  color: var(--gold, #d4af37);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-align: center;
+  padding: 20px;
+}
