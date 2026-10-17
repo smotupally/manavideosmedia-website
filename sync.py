@@ -519,6 +519,80 @@ def update_homepage_categories():
     print(f"Updated homepage category sections")
 
 
+def update_archive():
+    """Rebuild archive.html from all articles, grouped by month."""
+    import re
+    from datetime import datetime
+    from collections import defaultdict
+    
+    articles = []
+    for af in (SITE / "articles").glob("*.html"):
+        try:
+            text = af.read_text()
+        except:
+            continue
+        # Extract title
+        tm = re.search(r'<title>([^<]+)</title>', text)
+        title = tm.group(1).split('|')[0].strip() if tm else af.stem
+        # Extract date
+        date_str = None
+        m = re.search(r'<span class="date">([^<]+)</span>', text)
+        if m:
+            date_str = m.group(1).strip()
+        else:
+            m2 = re.search(r'<div class="meta"><span>([^<]+)</span>', text)
+            if m2:
+                date_str = m2.group(1).strip()
+        if not date_str:
+            continue
+        # Parse date (MM/DD/YYYY or YYYY-MM-DD)
+        dt = None
+        for fmt in ("%m/%d/%Y", "%Y-%m-%d"):
+            try:
+                dt = datetime.strptime(date_str, fmt)
+                break
+            except:
+                continue
+        if not dt:
+            continue
+        articles.append((dt, title, f"articles/{af.name}"))
+    
+    # Sort newest first
+    articles.sort(reverse=True, key=lambda x: x[0])
+    
+    # Group by month
+    by_month = defaultdict(list)
+    for dt, title, href in articles:
+        key = dt.strftime("%Y-%m")
+        by_month[key].append((dt, title, href))
+    
+    # Build HTML
+    months_html = ""
+    for key in sorted(by_month.keys(), reverse=True):
+        dt0 = datetime.strptime(key, "%Y-%m")
+        month_name = dt0.strftime("%B %Y")
+        items = by_month[key]
+        lis = "\n".join([
+            f'  <li><span class="archive-date">{d.strftime("%Y-%m-%d")}</span> <a href="{h}">{t}</a></li>'
+            for d, t, h in items
+        ])
+        months_html += f'<section class="archive-month"><h2>{month_name} <span class="count">({len(items)})</span></h2>\n<ul class="archive-list">\n{lis}\n</ul></section>\n'
+    
+    # Replace in archive.html
+    ap = SITE / "archive.html"
+    ahtml = ap.read_text()
+    new_ahtml = re.sub(
+        r'(<main><div class="container"><h1>Archive</h1><p class="te-sub">Browse all stories by month</p>\n)(.*?)(\n</div></main>)',
+        lambda m: m.group(1) + months_html.rstrip("\n") + m.group(3),
+        ahtml,
+        count=1,
+        flags=re.DOTALL
+    )
+    if new_ahtml != ahtml:
+        ap.write_text(new_ahtml)
+        print(f"Updated archive.html: {len(articles)} articles in {len(by_month)} months")
+
+
 def update_listings(new_articles):
     """Prepend new cards to stories.html and update sitemap."""
     if not new_articles:
@@ -569,6 +643,7 @@ def update_listings(new_articles):
     update_reels()
     update_homepage_stories()
     update_homepage_categories()
+    update_archive()
 
 
 def rebuild_rss():
