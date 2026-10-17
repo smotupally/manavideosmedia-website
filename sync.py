@@ -131,10 +131,96 @@ def crop_post_graphic(graphic_path):
         print(f"Crop failed for {graphic_path}: {e}")
         return None
 
-def article_template(slug, headline, te_sub, date_str, read_min, category, body_paras, extra_html="", image_html=""):
+
+def get_related_stories_html(current_slug, category, limit=3):
+    """Generate Related Stories section HTML for static posts."""
+    import re as _re
+    related = []
+    for f in sorted(ARTICLES_DIR.glob("*.html"), reverse=True):
+        slug = f.stem
+        if slug == current_slug:
+            continue
+        # Skip roundups for related (or include them? User said related from same category)
+        # Let's include all, but prioritize same category
+        try:
+            html = f.read_text(encoding='utf-8')
+            # Extract category from pill
+            m = _re.search(r'<span class="pill">([^<]+)', html)
+            cat = m.group(1).strip() if m else ""
+            # Extract headline
+            hm = _re.search(r'<h1>([^<]+)', html)
+            headline = hm.group(1).strip() if hm else slug
+            # Extract date
+            dm = _re.search(r'<div class="meta"><span>([^<]+)', html)
+            date = dm.group(1).strip() if dm else ""
+            related.append((slug, headline, date, cat))
+        except:
+            continue
+        if len(related) >= 20:  # Scan enough to find same-category
+            break
+    
+    # Prioritize same category
+    cat_label = CATEGORY_LABELS.get(category, category)
+    same_cat = [r for r in related if r[3] == cat_label]
+    others = [r for r in related if r[3] != cat_label]
+    picked = (same_cat + others)[:limit]
+    
+    if not picked:
+        return ""
+    
+    cards = ""
+    for slug, headline, date, cat in picked:
+        cards += f"""      <a href="{slug}.html" class="related-card">
+        <span class="related-cat">{cat}</span>
+        <span class="related-title">{headline}</span>
+        <span class="related-date">{date}</span>
+      </a>
+"""
+    
+    return f"""      <div class="related-stories">
+        <h3>Related Stories</h3>
+        <div class="related-grid">
+{cards}        </div>
+      </div>"""
+
+def article_template(slug, headline, te_sub, date_str, read_min, category, body_paras, extra_html="", image_html="", reel_url=None, related_html=""):
     cat_label = CATEGORY_LABELS[category]
     import json as _js
     headline_json = _js.dumps(headline)
+    # Build article body section - with reel sidebar for roundups, related stories for static posts
+    if reel_url:
+        # Roundup: two-column layout with reel sidebar
+        # Parse edition and date from slug (e.g., roundup-2026-10-17-morning)
+        import re as _re
+        from datetime import datetime as _dt
+        m = _re.match(r'roundup-(\d{4})-(\d{2})-(\d{2})-(morning|evening)', slug)
+        if m:
+            edition = m.group(4).capitalize() + " Edition"
+            date_obj = _dt(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+            date_lbl = date_obj.strftime("%b %d").replace(" 0", " ")
+        else:
+            edition, date_lbl = "Edition", date_str
+        article_body_section = f"""<div class="article-with-reel" style="display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start;width:100%;">
+        <div class="article-body">
+{body_paras}
+{extra_html}
+        </div>
+        <aside class="reel-sidebar" style="min-width:0;">
+          <div class="reel-sidebar-sticky" style="position:sticky;top:20px;max-height:calc(100vh - 40px);overflow-y:auto;">
+            <h3>Watch: {edition} &bull; {date_lbl}</h3>
+            <blockquote class="instagram-media" data-instgrm-permalink="{reel_url}" data-instgrm-version="14"></blockquote>
+          </div>
+        </aside>
+        <script async src="https://www.instagram.com/embed.js"></script>
+      </div>"""
+    else:
+        # Static post: single column + related stories
+        article_body_section = f"""<div class="article-body">
+{body_paras}
+{extra_html}
+      </div>
+{related_html}"""
+
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -199,10 +285,7 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
       {image_html}
       <div class="te-sub">{te_sub}</div>
       <div class="meta"><span>{date_str}</span><span class="sep">•</span><span>{read_min} min read</span><span class="sep">•</span><span>By Mana Videos Media</span></div>
-      <div class="article-body">
-{body_paras}
-{extra_html}
-      </div>
+{article_body_section}
       <div class="share">
         <div class="share-buttons">
           <span class="share-label">Share this story:</span>
@@ -307,11 +390,8 @@ def sync_reels(state):
         paras = f"<p>{header}</p>\n"
         for s in stories:
             paras += f"<p><strong>•</strong> {esc(s)}</p>\n"
-        extra = ""
-        if reel_url:
-            extra = f'<blockquote class="instagram-media" data-instgrm-permalink="{reel_url}" data-instgrm-version="14"></blockquote>\n<script async src="https://www.instagram.com/embed.js"></script>'
-
-        html = article_template(slug, esc(headline), te_sub, date_str, 3, "community", paras, extra)
+        # Reel goes in sidebar via reel_url param, not in body
+        html = article_template(slug, esc(headline), te_sub, date_str, 3, "community", paras, "", reel_url=reel_url)
         (ARTICLES_DIR / f"{slug}.html").write_text(html)
         new_articles.append({
             "slug": slug, "headline": headline, "te_sub": te_sub,
@@ -372,7 +452,8 @@ def sync_posts(state):
         if post_url:
             extra += f'\n<p><a href="{post_url}" target="_blank" rel="noopener">View on Instagram</a></p>'
 
-        html = article_template(slug, esc(headline), te_sub, post_id, 2, category, paras, extra, image_html)
+        related_html = get_related_stories_html(slug, category)
+        html = article_template(slug, esc(headline), te_sub, post_id, 2, category, paras, extra, image_html, related_html=related_html)
         (ARTICLES_DIR / f"{slug}.html").write_text(html)
         # Store cropped image for card thumbnail (same image in card and article)
         thumb_b64 = ""
