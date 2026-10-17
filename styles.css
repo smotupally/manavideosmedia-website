@@ -406,7 +406,8 @@ footer {
 .share-btn.facebook { background: #1877f2; color: #fff; }
 .share-btn.copy { background: var(--gold); color: #0a1628; }
 
-article .meta span + span::before { content: " • "; color: var(--muted); }
+.article-page .meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--muted); font-size: 14px; margin: 16px 0; }
+.article-page .meta span + span::before { content: "•"; margin-right: 8px; color: var(--gold); }
 .card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* ---------- Reel carousel ---------- */
@@ -422,3 +423,9 @@ article .meta span + span::before { content: " • "; color: var(--muted); }
 @media (max-width: 640px) {
   .reel-carousel .reel-embed { flex: 0 0 100%; }
 }
+
+.article-page .article-body p { margin: 0 0 18px 0; line-height: 1.75; }
+.article-page .article-body p:last-child { margin-bottom: 0; }
+.article-page h1 { margin-bottom: 16px; line-height: 1.3; }
+.article-page .te-sub { margin: 12px 0 16px 0; }
+.article-page .article-image { margin: 20px 0; }
