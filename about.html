@@ -227,7 +227,14 @@
     var pos = 0;
     var width = content.scrollWidth;
     if (width < 100) { setTimeout(startTicker, 500); return; }
+    var paused = false;
+    var ticker = document.getElementById('news-ticker');
+    if (ticker) {
+      ticker.addEventListener('mouseenter', function() { paused = true; });
+      ticker.addEventListener('mouseleave', function() { paused = false; });
+    }
     setInterval(function() {
+      if (paused) return;
       pos -= 2;
       if (-pos >= width / 2) { pos = 0; }
       content.style.transform = 'translateX(' + pos + 'px)';
