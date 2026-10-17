@@ -27,9 +27,13 @@
   }
   </script>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="057a8fb0-a6cb-489c-868d-18291b14028d"></script>
+  <meta property="og:image" content="https://manavideosmedia.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://manavideosmedia.com/og-image.png">
 </head>
 <body>
-<!-- SAMPLE ARTICLE: placeholder content for site launch. Replace with a real published article. -->
 
 <div class="topbar">
   <div class="container">
@@ -99,7 +103,7 @@
         <h4>Explore</h4>
         <ul>
           <li><a href="../index.html">Home</a></li>
-          <li><a href="../stories.html">Stories</a></li>
+          <li><a href="../stories.html">Stories</a></li><li><a href="../archive.html">Archive</a></li>
           <li><a href="../channels.html">Channels</a></li>
           <li><a href="../about.html">About</a></li>
         </ul>
@@ -126,5 +130,16 @@
   </div>
 </footer>
 
+<script>
+(function () {
+  var teDays = ['ఆదివారం','సోమవారం','మంగళవారం','బుధవారం','గురువారం','శుక్రవారం','శనివారం'];
+  var now = new Date();
+  var opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  var dateStr = now.toLocaleDateString('en-US', opts) + ' | ' + teDays[now.getDay()];
+  document.querySelectorAll('.topbar .date').forEach(function (el) {
+    el.textContent = dateStr;
+  });
+})();
+</script>
 </body>
 </html>
