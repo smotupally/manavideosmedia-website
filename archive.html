@@ -196,5 +196,44 @@
   <div class="ticker-scroll"><span>Microsoft President Brad Smith has hit back at the Trump administration over the &nbsp;•&nbsp; Rest in peace, Bharath Kumar Pulipati. &nbsp;•&nbsp; RUBIO TO VISIT INDIA — OCT 17–22 &nbsp;•&nbsp; 12-MONTH WAIT FOR US TOURIST VISA IN HYDERABAD &nbsp;•&nbsp; OCT 18 DEADLINE INDIA FACES UP TO 100 US TARIFFS! &nbsp;•&nbsp; TRUMP ANNOUNCES RUSSIA-UKRAINE ENERGY CEASEFIRE! &nbsp;•&nbsp; US SANCTIONS 2 MUMBAI FIRMS  5 INDIANS OVER ALLEGED IRAN OIL TRADE! &nbsp;•&nbsp; PRESIDENT TRUMP HONORS HYDERABAD'S SATYA NADELLA WITH AMERICA'S TOP TECH MEDAL!</span></div>
   <button class="ticker-close" onclick="document.getElementById('news-ticker').style.display='none'">✕</button>
 </div>
+
+<script>
+(function() {
+  // 1. Reading progress bar
+  var progress = document.createElement('div');
+  progress.className = 'read-progress';
+  document.body.appendChild(progress);
+  window.addEventListener('scroll', function() {
+    var h = document.documentElement;
+    var pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    progress.style.width = pct + '%';
+  });
+
+  // 2. Scroll fade-in
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.card, .hero, section h2').forEach(function(el) {
+    el.classList.add('fade-in');
+    observer.observe(el);
+  });
+
+  // 3. Back to top
+  var btt = document.createElement('button');
+  btt.className = 'back-to-top';
+  btt.innerHTML = '↑';
+  btt.setAttribute('aria-label', 'Back to top');
+  document.body.appendChild(btt);
+  window.addEventListener('scroll', function() {
+    btt.classList.toggle('show', window.scrollY > 400);
+  });
+  btt.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+
 </body>
 </html>
