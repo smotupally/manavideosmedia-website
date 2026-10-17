@@ -68,6 +68,9 @@
 
   <section class="section">
     <div class="container">
+      <div class="search-wrap">
+        <input type="search" id="story-search" placeholder="Search stories… (try H-1B, Bathukamma, Dallas)" aria-label="Search stories">
+      </div>
       <div class="filters" role="tablist" aria-label="Filter stories by category">
         <button class="filter-btn active" data-filter="all">All</button>
         <button class="filter-btn" data-filter="community">Community News</button>
@@ -874,17 +877,39 @@
 (function () {
   var buttons = document.querySelectorAll('.filter-btn');
   var cards = document.querySelectorAll('#story-grid .card');
+  var search = document.getElementById('story-search');
+  var activeFilter = 'all';
+  var grid = document.getElementById('story-grid');
+
+  var noResults = document.createElement('p');
+  noResults.className = 'no-results';
+  noResults.style.display = 'none';
+  noResults.textContent = 'No stories match your search. Try a different keyword.';
+  grid.parentNode.insertBefore(noResults, grid.nextSibling);
+
+  function applyFilters() {
+    var q = (search.value || '').trim().toLowerCase();
+    var visible = 0;
+    cards.forEach(function (card) {
+      var catOk = (activeFilter === 'all') || (card.getAttribute('data-category') === activeFilter);
+      var text = (card.textContent || '').toLowerCase();
+      var qOk = !q || text.indexOf(q) !== -1;
+      var show = catOk && qOk;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    noResults.style.display = visible ? 'none' : '';
+  }
+
   buttons.forEach(function (btn) {
     btn.addEventListener('click', function () {
       buttons.forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
-      var f = btn.getAttribute('data-filter');
-      cards.forEach(function (card) {
-        var show = (f === 'all') || (card.getAttribute('data-category') === f);
-        card.style.display = show ? '' : 'none';
-      });
+      activeFilter = btn.getAttribute('data-filter');
+      applyFilters();
     });
   });
+  search.addEventListener('input', applyFilters);
 })();
 </script>
 </body>
