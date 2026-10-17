@@ -30,7 +30,7 @@
 
 <header class="brandbar">
   <div class="container">
-    <div class="logo"><img src="../images/logo.jpg" alt="Mana Videos Media" class="brand-logo">MANA VIDEOS <span class="gold">MEDIA</span></div>
+    <div class="logo"><span class="brand-logo-img"></span></div>
     <div class="tagline">USA Telugu News, Every Morning &amp; Evening &nbsp;•&nbsp; <span class="te">అమెరికా తెలుగు వార్తలు</span></div>
   </div>
 </header>
@@ -66,6 +66,13 @@
 <img src="../images/oct-18-deadline-india-faces-up-to-100-us-tariffs.png" alt="OCT 18 DEADLINE INDIA FACES UP TO 100 US TARIFFS!" style="max-width:100%;height:auto;">
       </div>
       <div class="share">
+        <div class="share-buttons">
+          <span class="share-label">Share this story:</span>
+          <a href="#" class="share-btn whatsapp" data-share="whatsapp" aria-label="Share on WhatsApp">WhatsApp</a>
+          <a href="#" class="share-btn x" data-share="x" aria-label="Share on X">X</a>
+          <a href="#" class="share-btn facebook" data-share="facebook" aria-label="Share on Facebook">Facebook</a>
+          <button class="share-btn copy" data-share="copy" aria-label="Copy link">Copy Link</button>
+        </div>
         <p>Follow <a href="https://www.instagram.com/manavideos_media" target="_blank" rel="noopener">@manavideos_media</a> on Instagram for daily Telugu news roundups.</p>
       </div>
       <p><a href="../stories.html">&larr; More stories</a></p>
@@ -77,7 +84,7 @@
   <div class="container">
     <div class="foot-grid">
       <div class="foot-brand">
-        <div class="logo"><img src="../images/logo.jpg" alt="Mana Videos Media" class="brand-logo">MANA VIDEOS <span class="gold">MEDIA</span></div>
+        <div class="logo"><span class="brand-logo-img"></span></div>
         <p>Helping our people grow every day with the knowledge we give — genuine, honest day-to-day info for the Telugu diaspora.</p>
       </div>
       <div class="foot-links">
@@ -90,5 +97,30 @@
     <div class="foot-bottom">&copy; 2026 Mana Videos Media. All rights reserved.</div>
   </div>
 </footer>
+<script>
+(function () {
+  var buttons = document.querySelectorAll('.share-btn');
+  var url = encodeURIComponent(window.location.href);
+  var title = encodeURIComponent(document.title);
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      var type = btn.getAttribute('data-share');
+      if (type === 'whatsapp') {
+        window.open('https://wa.me/?text=' + title + '%20' + url, '_blank');
+      } else if (type === 'x') {
+        window.open('https://twitter.com/intent/tweet?text=' + title + '&url=' + url, '_blank');
+      } else if (type === 'facebook') {
+        window.open('https://www.facebook.com/sharer/sharer.php?u=' + url, '_blank');
+      } else if (type === 'copy') {
+        navigator.clipboard.writeText(window.location.href).then(function () {
+          btn.textContent = 'Copied!';
+          setTimeout(function () { btn.textContent = 'Copy Link'; }, 2000);
+        });
+      }
+    });
+  });
+})();
+</script>
 </body>
 </html>
