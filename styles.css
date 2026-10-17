@@ -282,7 +282,10 @@ footer {
 .foot-grid a:hover { color: var(--gold); }
 .foot-brand .logo { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: 1px; }
 .foot-brand .logo .gold { color: var(--gold); }
-.foot-brand p { margin-top: 10px; max-width: 320px; }
+.foot-brand p { margin-top: 10px; max-width: 320px; line-height: 1.6; }
+.foot-links { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
+.foot-links a { color: var(--muted); text-decoration: none; font-size: 14px; }
+.foot-links a:hover { color: var(--gold); }
 .copy { border-top: 1px solid var(--border); padding-top: 18px; text-align: center; font-size: 13px; }
 
 /* ---------- Filter bar (stories page) ---------- */
@@ -429,3 +432,6 @@ footer {
 .article-page h1 { margin-bottom: 16px; line-height: 1.3; }
 .article-page .te-sub { margin: 12px 0 16px 0; }
 .article-page .article-image { margin: 20px 0; }
+
+.share-wrap { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 20px 0; }
+.share-wrap .share-label { font-weight: 700; margin-right: 8px; }
