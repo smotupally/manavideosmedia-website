@@ -1,16 +1,18 @@
-# Mana Videos Media — llms.txt
-# USA Telugu news for the diaspora
+# Mana Videos Media
+
+> USA Telugu News, Every Morning & Evening. Trusted Telugu news source for the Indian diaspora in America.
 
 ## About
-Mana Videos Media (@manavideos_media on Instagram) brings USA Telugu news to the diaspora — community stories, immigration updates, politics and NRI life, in Telugu and English. New roundup reels every morning and evening.
+Mana Videos Media (@manavideos_media) is a Telugu news outlet serving the Telugu-speaking Indian diaspora in the United States. We publish news roundups twice daily (6 AM and 6 PM CT) covering US politics, immigration, visas, Telugu community events, and India-US relations.
 
-## Sections
-- Home: https://manavideosmedia.com/
-- Stories: https://manavideosmedia.com/stories.html (Community News, Politics, NRI Hub, Visa & Immigration)
-- Channels: https://manavideosmedia.com/channels.html (all Mana Videos Instagram channels)
-- About: https://manavideosmedia.com/about.html
-- Contact: https://manavideosmedia.com/contact.html
+- Website: https://manavideosmedia.com
+- Instagram: https://www.instagram.com/manavideos_media/
+- Coverage: US news for Telugu speakers, immigration updates, H-1B, visa news, community events
 
-## Contact
-- Email: manavideosmedia@gmail.com
-- Instagram: https://www.instagram.com/manavideos_media
+## Content
+- Latest Stories: https://manavideosmedia.com/stories.html
+- Archive: https://manavideosmedia.com/archive.html
+- RSS Feed: https://manavideosmedia.com/rss.xml
+
+## Key Topics
+US immigration policy, H-1B visas, Telugu community news, India-US relations, consular updates, Dallas/Houston/Chicago Telugu events.
