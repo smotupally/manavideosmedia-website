@@ -237,16 +237,23 @@
 
 <script>
 (function() {
-  var content = document.querySelector('#news-ticker .ticker-content');
-  if (!content) return;
-  var pos = 0;
-  function tick() {
-    pos -= 1;
-    if (-pos >= content.scrollWidth / 2) { pos = 0; }
-    content.style.transform = 'translateX(' + pos + 'px)';
-    requestAnimationFrame(tick);
+  function startTicker() {
+    var content = document.querySelector('#news-ticker .ticker-content');
+    if (!content) { setTimeout(startTicker, 500); return; }
+    var pos = 0;
+    var width = content.scrollWidth;
+    if (width < 100) { setTimeout(startTicker, 500); return; }
+    setInterval(function() {
+      pos -= 2;
+      if (-pos >= width / 2) { pos = 0; }
+      content.style.transform = 'translateX(' + pos + 'px)';
+    }, 16);
   }
-  requestAnimationFrame(tick);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startTicker);
+  } else {
+    startTicker();
+  }
 })();
 </script>
 </body>
