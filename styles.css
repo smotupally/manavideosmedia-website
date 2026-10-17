@@ -375,3 +375,22 @@ footer {
     padding-left: 64px;
   }
 }
+
+.search-wrap { margin: 0 0 18px; }
+.search-wrap input[type="search"] {
+  width: 100%;
+  max-width: 560px;
+  padding: 13px 18px;
+  font-size: 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: #0d1a30;
+  color: #fff;
+  outline: none;
+}
+.search-wrap input[type="search"]:focus { border-color: var(--gold); }
+.search-wrap input[type="search"]::placeholder { color: #7d8aa0; }
+.no-results { text-align: center; color: var(--muted); padding: 30px 0; font-size: 17px; }
+@media (max-width: 640px) {
+  .search-wrap input[type="search"] { font-size: 16px; }
+}
