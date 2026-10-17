@@ -975,33 +975,8 @@
       var btn = this;
       btn.disabled = true;
       btn.textContent = '⟳ Refreshing...';
-      // Clear filters so refresh shows all fresh stories
-      if (dateInput) dateInput.value = '';
-      if (search) search.value = '';
-      buttons.forEach(function(b) { b.classList.remove('active'); });
-      var allBtn = document.querySelector('.filter-btn[data-filter="all"]');
-      if (allBtn) allBtn.classList.add('active');
-      activeFilter = 'all';
-      fetch(window.location.pathname + '?t=' + Date.now())
-        .then(function(r) { return r.text(); })
-        .then(function(pageHtml) {
-          var parser = new DOMParser();
-          var doc = parser.parseFromString(pageHtml, 'text/html');
-          var newGrid = doc.getElementById('story-grid');
-          var oldGrid = document.getElementById('story-grid');
-          if (newGrid && oldGrid) {
-            oldGrid.innerHTML = newGrid.innerHTML;
-            // Re-collect cards and re-apply filters
-            cards = Array.prototype.slice.call(oldGrid.querySelectorAll('.card'));
-            applyFilters();
-          }
-          btn.disabled = false;
-          btn.textContent = '⟳ Refresh';
-        })
-        .catch(function() {
-          btn.disabled = false;
-          btn.textContent = '⟳ Refresh';
-        });
+      // Hard reload to get fresh stories from server
+      window.location.reload(true);
     });
   }
 
