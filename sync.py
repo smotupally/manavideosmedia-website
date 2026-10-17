@@ -471,6 +471,31 @@ def update_reels():
         print(f"Updated homepage reels: {len(latest)} latest")
 
 
+def update_homepage_stories():
+    """Update homepage Latest Stories with 6 most recent articles."""
+    import re
+    sp = SITE / "stories.html"
+    html = sp.read_text()
+    # Extract first 6 cards from stories.html
+    cards = re.findall(r'<article class="card"[^>]*>.*?</article>', html, re.DOTALL)[:6]
+    if len(cards) < 6:
+        return
+    # Update index.html - replace cards in Latest Stories grid
+    ip = SITE / "index.html"
+    ihtml = ip.read_text()
+    # Find the Latest Stories grid (the one after <h2>Latest Stories</h2>)
+    # Pattern: <h2>Latest Stories</h2> ... <div class="grid"> ... </div>
+    pattern = r'(<h2>Latest Stories</h2>.*?<div class="grid">\n)(.*?)(\n        </div>)'
+    m = re.search(pattern, ihtml, re.DOTALL)
+    if not m:
+        return
+    new_cards = "\n".join(["        " + c for c in cards])
+    new_ihtml = ihtml[:m.start(2)] + new_cards + ihtml[m.end(2):]
+    if new_ihtml != ihtml:
+        ip.write_text(new_ihtml)
+        print(f"Updated homepage Latest Stories: {len(cards)} articles")
+
+
 def update_listings(new_articles):
     """Prepend new cards to stories.html and update sitemap."""
     if not new_articles:
@@ -519,6 +544,7 @@ def update_listings(new_articles):
     print(f"Updated listings with {len(new_articles)} new articles")
     update_ticker()
     update_reels()
+    update_homepage_stories()
 
 
 def rebuild_rss():
