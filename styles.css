@@ -605,3 +605,18 @@ body { padding-bottom: 44px; }
 
   100% { transform: translateX(-100%); }
 }
+
+/* Static 3-reel grid (no carousel) */
+.reels-static {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.reels-static .reel-embed {
+  min-width: 0;
+}
+@media (max-width: 640px) {
+  .reels-static {
+    grid-template-columns: 1fr;
+  }
+}
