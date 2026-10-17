@@ -395,6 +395,38 @@ def sync_posts(state):
         print(f"Post article: {slug}")
     return new_articles
 
+def update_ticker():
+    """Update ticker headlines on all main pages with latest 8 article headlines."""
+    import glob, re
+    # Get latest 8 articles by reading stories.html cards
+    sp = SITE / "stories.html"
+    html = sp.read_text()
+    # Extract headlines from cards (first 8)
+    headlines = re.findall(r'<h3><a[^>]*>([^<]+)</a></h3>', html)[:8]
+    if not headlines:
+        return
+    # Build ticker content (duplicated for seamless loop)
+    ticker_text = " • ".join(headlines)
+    ticker_html = f"{ticker_text} &nbsp;•&nbsp; {ticker_text}"
+    
+    for page in ["index.html", "stories.html", "archive.html", "channels.html", "about.html", "contact.html"]:
+        pp = SITE / page
+        if not pp.exists():
+            continue
+        phtml = pp.read_text()
+        # Replace ticker content
+        new_phtml = re.sub(
+            r'(<div class="ticker-content">).*?(</div>)',
+            lambda m: m.group(1) + ticker_html + m.group(2),
+            phtml,
+            count=1,
+            flags=re.DOTALL
+        )
+        if new_phtml != phtml:
+            pp.write_text(new_phtml)
+    print(f"Updated ticker with {len(headlines)} headlines")
+
+
 def update_listings(new_articles):
     """Prepend new cards to stories.html and update sitemap."""
     if not new_articles:
@@ -441,6 +473,7 @@ def update_listings(new_articles):
     sm = sm.replace('</urlset>', urls + '</urlset>')
     smp.write_text(sm)
     print(f"Updated listings with {len(new_articles)} new articles")
+    update_ticker()
 
 
 def rebuild_rss():
