@@ -187,20 +187,23 @@ function openRashi(rashiName) {
   
   if (reels.length > 0) {
     let reelsHtml = reels.map(r => `
-      <a href="${r.url}" target="_blank" rel="noopener" class="reel-card">
-        <div class="reel-card-thumb">
-          <span class="reel-card-icon">${rashi.icon}</span>
-          <span class="reel-card-play">▶</span>
-        </div>
-        <div class="reel-card-label">${r.label}</div>
-        <div class="reel-card-sub">${rashi.en} • @manavideos_horoscope</div>
-      </a>
+      <div>
+        <div style="color:var(--gold);font-weight:600;text-align:center;margin-bottom:8px;">${r.label}</div>
+        <blockquote class="instagram-media" data-instgrm-permalink="${r.url}" data-instgrm-version="14" style="background:#fff;border-radius:8px;margin:0 auto;max-width:400px;"></blockquote>
+      </div>
     `).join('');
     body.innerHTML = `
       <h3>${rashi.icon} ${rashi.en} (${rashi.te})</h3>
-      <div class="grid reels-grid">${reelsHtml}</div>
-      <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin-top:16px;">Click a reel to watch on Instagram</p>
+      <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:20px;">${reelsHtml}</div>
     `;
+    if (window.instgrm && window.instgrm.Embeds) {
+      window.instgrm.Embeds.process();
+    } else {
+      var s = document.createElement('script');
+      s.src = 'https://www.instagram.com/embed.js';
+      s.onload = function() { window.instgrm.Embeds.process(); };
+      document.body.appendChild(s);
+    }
   } else {
     body.innerHTML = `
       <h3>${rashi.icon} ${rashi.en} (${rashi.te})</h3>
