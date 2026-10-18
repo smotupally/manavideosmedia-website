@@ -59,13 +59,29 @@
 
 <nav class="mainnav" aria-label="Main navigation">
   <div class="container">
-    <ul class="navlinks">
+        <ul class="navlinks">
       <li><a href="index.html">Home</a></li>
-      <li><a href="stories.html">Stories</a></li><li><a href="archive.html">Archive</a></li>
+      <li class="has-dropdown">
+        <a href="stories.html">News ▾</a>
+        <ul class="dropdown">
+          <li><a href="stories.html">All Stories</a></li>
+          <li><a href="stories.html#cat-community">Community News</a></li>
+          <li><a href="stories.html#cat-politics">Politics</a></li>
+          <li><a href="stories.html#cat-nri">NRI Hub</a></li>
+          <li><a href="stories.html#cat-visa">Visa & Immigration</a></li>
+          <li><a href="archive.html">Archive</a></li>
+        </ul>
+      </li>
       <li><a href="channels.html">Channels</a></li>
-      <li><a href="horoscope.html">Horoscope</a></li>
+      <li class="has-dropdown">
+        <a href="#">Services ▾</a>
+        <ul class="dropdown">
+          <li><a href="horoscope.html">Horoscope</a></li>
+          <li><a href="matrimony.html">Matrimony</a></li>
+        </ul>
+      </li>
       <li><a href="about.html">About</a></li>
-      <li><a href="contact.html" class="active">Contact</a></li>
+      <li><a href="contact.html">Contact</a></li>
     </ul>
   </div>
 </nav>
