@@ -29,8 +29,10 @@
 .rashi-modal-close { position: absolute; top: 12px; right: 12px; background: var(--gold); color: #000; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 1.2rem; cursor: pointer; z-index: 10; }
 .rashi-modal-body { padding: 20px; }
 .rashi-modal-body h3 { color: var(--gold); text-align: center; margin-bottom: 16px; }
-.rashi-reels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-@media (max-width: 768px) { .rashi-reels-grid { grid-template-columns: 1fr; } }
+.rashi-reels-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+.rashi-reels-grid > div { flex: 1 1 400px; max-width: 450px; min-width: 300px; }
+.rashi-reels-grid .instagram-media { min-width: 0 !important; width: 100% !important; }
+@media (max-width: 768px) { .rashi-reels-grid > div { flex: 1 1 100%; max-width: 100%; } }
 </style>
 </head>
 <body>
