@@ -22,10 +22,9 @@
 .horoscope-cta-box { background: linear-gradient(135deg, #1a1a2e, #16213e); border: 1px solid var(--gold); border-radius: 12px; padding: 32px; text-align: center; }
 .horoscope-cta-box h3 { color: var(--gold); margin-bottom: 8px; }
 .horoscope-cta-box p { color: var(--muted); margin-bottom: 16px; }
-/* Modal */
 .rashi-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
 .rashi-modal.active { display: flex; }
-.rashi-modal-content { background: var(--card-bg); border-radius: 12px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; }
+.rashi-modal-content { background: var(--card-bg); border-radius: 12px; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; }
 .rashi-modal-close { position: absolute; top: 12px; right: 12px; background: var(--gold); color: #000; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 1.2rem; cursor: pointer; z-index: 10; }
 .rashi-modal-body { padding: 20px; }
 .rashi-modal-body h3 { color: var(--gold); text-align: center; margin-bottom: 16px; }
@@ -41,14 +40,12 @@
     </span>
   </div>
 </div>
-
 <header class="brandbar">
   <div class="container">
     <div class="logo"><span class="brand-logo-img"></span>MANA VIDEOS <span class="gold">MEDIA</span></div>
     <div class="tagline">USA Telugu News, Every Morning &amp; Evening &nbsp;•&nbsp; <span class="te">అమెరికా తెలుగు వార్తలు</span></div>
   </div>
 </header>
-
 <nav class="mainnav" aria-label="Main navigation">
   <div class="container">
     <ul class="navlinks">
@@ -67,11 +64,7 @@
   <p>Select your rashi to watch today's video prediction</p>
   <p style="font-size:0.9rem;">From <a href="https://www.instagram.com/manavideos_horoscope" target="_blank" style="color:var(--gold);">@manavideos_horoscope</a></p>
 </div>
-
-<div class="rashi-grid" id="rashi-grid">
-  <!-- Populated by JS -->
-</div>
-
+<div class="rashi-grid" id="rashi-grid"></div>
 <div class="horoscope-cta">
   <div class="horoscope-cta-box">
     <h3>Need Personal Horoscope Reading?</h3>
@@ -80,16 +73,12 @@
   </div>
 </div>
 </main>
-
 <div class="rashi-modal" id="rashi-modal">
   <div class="rashi-modal-content">
     <button class="rashi-modal-close" onclick="closeRashiModal()">✕</button>
-    <div class="rashi-modal-body" id="rashi-modal-body">
-      <!-- Instagram embed loaded here -->
-    </div>
+    <div class="rashi-modal-body" id="rashi-modal-body"></div>
   </div>
 </div>
-
 <script>
 const RASHIS = [
   {en: "Aries", te: "మేషం", icon: "♈"},
@@ -105,79 +94,82 @@ const RASHIS = [
   {en: "Aquarius", te: "కుంభం", icon: "♒"},
   {en: "Pisces", te: "మీనం", icon: "♓"},
 ];
-
-// Rashi -> Instagram reel/post URL mapping
-// Update this when new horoscope reels are posted
-const RASHI_URLS = {
-  "Aries": "https://www.instagram.com/reel/DdpqGZEEyY3/",
-  "Taurus": "https://www.instagram.com/reel/DdpqdnJk6_E/",
-  "Gemini": "https://www.instagram.com/reel/Ddpqkg4E0Ww/",
-  "Cancer": "https://www.instagram.com/reel/Ddpqp36E5vq/",
-  "Leo": "https://www.instagram.com/reel/Ddpqv7eExvO/",
-  "Virgo": "https://www.instagram.com/reel/Ddpq1yWk3IR/",
-  "Libra": "https://www.instagram.com/reel/DdprZNUkycO/",
-  "Scorpio": "https://www.instagram.com/reel/Ddprfp1E2Xc/",
-  "Sagittarius": "https://www.instagram.com/reel/DdprlkDEzSP/",
-  "Capricorn": "https://www.instagram.com/reel/DdprrUeE8O5/",
-  "Aquarius": "https://www.instagram.com/reel/DdtbgS_D-MX/",
-  "Pisces": "https://www.instagram.com/reel/Ddtbl8HD3jF/",
+const RASHI_REELS = {
+  "Aries": [
+    {"url": "https://www.instagram.com/reel/DdpqGZEEyY3/", "label": "October 2026"},
+    {"url": "https://www.instagram.com/reel/Ddxat5vjsgQ/", "label": "Marriage Special"},
+  ],
+  "Taurus": [
+    {"url": "https://www.instagram.com/reel/DdpqdnJk6_E/", "label": "October 2026"},
+    {"url": "https://www.instagram.com/reel/Ddxh7uzjnmK/", "label": "Marriage Special"},
+  ],
+  "Gemini": [
+    {"url": "https://www.instagram.com/reel/Ddpqkg4E0Ww/", "label": "October 2026"},
+    {"url": "https://www.instagram.com/reel/DdwI6iajzyG/", "label": "Marriage Special"},
+  ],
+  "Cancer": [
+    {"url": "https://www.instagram.com/reel/Ddpqp36E5vq/", "label": "October 2026"},
+    {"url": "https://www.instagram.com/reel/Dd0FDPOD_np/", "label": "Marriage Special"},
+  ],
+  "Leo": [
+    {"url": "https://www.instagram.com/reel/Ddpqv7eExvO/", "label": "October 2026"},
+    {"url": "https://www.instagram.com/reel/Ddz3iFQjumn/", "label": "Marriage Special"},
+  ],
+  "Virgo": [
+    {"url": "https://www.instagram.com/reel/Ddpq1yWk3IR/", "label": "October 2026"},
+    {"url": "https://www.instagram.com/reel/Ddz_JqzDy-n/", "label": "Marriage Special"},
+  ],
+  "Libra": [
+    {"url": "https://www.instagram.com/reel/DdprZNUkycO/", "label": "October 2026"},
+    {"url": "https://www.instagram.com/reel/Ddu7W5ojt4n/", "label": "Marriage Special"},
+    {"url": "https://www.instagram.com/reel/DeNwpLzjwuf/", "label": "Weekly Special"},
+  ],
+  "Scorpio": [
+    {"url": "https://www.instagram.com/reel/Ddprfp1E2Xc/", "label": "October 2026"},
+    {"url": "https://www.instagram.com/reel/DdwFW2eD7CK/", "label": "Marriage Special"},
+  ],
+  "Sagittarius": [
+    {"url": "https://www.instagram.com/reel/DdprlkDEzSP/", "label": "October 2026"},
+    {"url": "https://www.instagram.com/reel/DdxSSN6Dh2X/", "label": "Marriage Special"},
+  ],
+  "Capricorn": [
+    {"url": "https://www.instagram.com/reel/DdprrUeE8O5/", "label": "October 2026"},
+    {"url": "https://www.instagram.com/reel/Dd2b6bXDFWx/", "label": "Marriage Special"},
+  ],
+  "Aquarius": [
+    {"url": "https://www.instagram.com/reel/DdtbgS_D-MX/", "label": "October 2026"},
+    {"url": "https://www.instagram.com/reel/Dd2ixvJjlVT/", "label": "Marriage Special"},
+  ],
+  "Pisces": [
+    {"url": "https://www.instagram.com/reel/Ddtbl8HD3jF/", "label": "October 2026"},
+    {"url": "https://www.instagram.com/reel/Dd2ssGfDCYI/", "label": "Marriage Special"},
+  ],
 };
-
 function renderRashis() {
   const grid = document.getElementById('rashi-grid');
-  grid.innerHTML = RASHIS.map(r => `
-    <div class="rashi-card" onclick="openRashi('${r.en}')">
-      <div class="rashi-icon">${r.icon}</div>
-      <div class="rashi-name">${r.en}</div>
-      <div class="rashi-telugu">${r.te}</div>
-    </div>
-  `).join('');
+  grid.innerHTML = RASHIS.map(r => '<div class="rashi-card" onclick="openRashi(\'' + r.en + '\')"><div class="rashi-icon">' + r.icon + '</div><div class="rashi-name">' + r.en + '</div><div class="rashi-telugu">' + r.te + '</div></div>').join('');
 }
-
 function openRashi(rashiName) {
-  const url = RASHI_URLS[rashiName];
+  const reels = RASHI_REELS[rashiName] || [];
   const modal = document.getElementById('rashi-modal');
   const body = document.getElementById('rashi-modal-body');
   const rashi = RASHIS.find(r => r.en === rashiName);
-  
-  if (url) {
-    body.innerHTML = `
-      <h3>${rashi.icon} ${rashi.en} (${rashi.te})</h3>
-      <blockquote class="instagram-media" data-instgrm-permalink="${url}" data-instgrm-version="14" style="background:#fff;border-radius:8px;margin:0 auto;max-width:400px;min-height:400px;"></blockquote>
-    `;
-    // Process the new embed - retry if instgrm not loaded yet
+  if (reels.length > 0) {
+    let reelsHtml = reels.map(r => '<div style="margin-bottom:24px;"><div style="color:var(--gold);font-weight:600;text-align:center;margin-bottom:8px;font-size:0.9rem;">' + r.label + '</div><blockquote class="instagram-media" data-instgrm-permalink="' + r.url + '" data-instgrm-version="14" style="background:#fff;border-radius:8px;margin:0 auto;max-width:400px;min-height:400px;"></blockquote></div>').join('');
+    body.innerHTML = '<h3>' + rashi.icon + ' ' + rashi.en + ' (' + rashi.te + ')</h3><div style="display:flex;flex-direction:column;gap:16px;">' + reelsHtml + '</div>';
     function tryProcess(attempts) {
-      if (window.instgrm && window.instgrm.Embeds) {
-        window.instgrm.Embeds.process();
-      } else if (attempts > 0) {
-        setTimeout(() => tryProcess(attempts - 1), 500);
-      }
+      if (window.instgrm && window.instgrm.Embeds) { window.instgrm.Embeds.process(); }
+      else if (attempts > 0) { setTimeout(() => tryProcess(attempts - 1), 500); }
     }
     tryProcess(10);
   } else {
-    body.innerHTML = `
-      <h3>${rashi.icon} ${rashi.en} (${rashi.te})</h3>
-      <p style="text-align:center;color:var(--muted);padding:20px;">
-        Today's video for ${rashi.en} is coming soon.<br><br>
-        <a href="https://www.instagram.com/manavideos_horoscope" target="_blank" style="color:var(--gold);">Follow @manavideos_horoscope</a> for daily updates.
-      </p>
-    `;
+    body.innerHTML = '<h3>' + rashi.icon + ' ' + rashi.en + ' (' + rashi.te + ')</h3><p style="text-align:center;color:var(--muted);padding:20px;">Coming soon.<br><br><a href="https://www.instagram.com/manavideos_horoscope" target="_blank" style="color:var(--gold);">Follow @manavideos_horoscope</a></p>';
   }
   modal.classList.add('active');
 }
-
-function closeRashiModal() {
-  document.getElementById('rashi-modal').classList.remove('active');
-}
-
-document.getElementById('rashi-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeRashiModal();
-});
-
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeRashiModal();
-});
-
+function closeRashiModal() { document.getElementById('rashi-modal').classList.remove('active'); }
+document.getElementById('rashi-modal').addEventListener('click', function(e) { if (e.target === this) closeRashiModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeRashiModal(); });
 renderRashis();
 </script>
 <footer>
@@ -193,7 +185,7 @@ renderRashis();
           <li><a href="index.html">Home</a></li>
           <li><a href="stories.html">Stories</a></li>
           <li><a href="channels.html">Channels</a></li>
-      <li><a href="horoscope.html">Horoscope</a></li>
+          <li><a href="horoscope.html">Horoscope</a></li>
           <li><a href="about.html">About</a></li>
         </ul>
       </div>
