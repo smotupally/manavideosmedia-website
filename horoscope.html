@@ -96,6 +96,155 @@
   <!-- Populated by JS -->
 </div>
 
+
+<div class="mat-section" id="compatibility" style="max-width:1100px;margin:0 auto;padding:48px 20px;">
+  <h2 style="color:var(--gold);text-align:center;margin-bottom:8px;">💑 Rashi Compatibility</h2>
+  <p style="text-align:center;color:var(--muted);max-width:600px;margin:0 auto 32px;">Check basic compatibility between two rashis based on Vedic astrology principles — elements, gana (temperament), and planetary lords.</p>
+  
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;">
+    <div>
+      <label style="display:block;color:var(--text);margin-bottom:8px;font-weight:600;">Your Rashi</label>
+      <select id="compat-rashi1" style="padding:12px 16px;border-radius:8px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);font-size:1rem;min-width:180px;">
+        <option value="">Select...</option>
+      </select>
+    </div>
+    <div style="display:flex;align-items:flex-end;padding-bottom:12px;font-size:1.5rem;">💛</div>
+    <div>
+      <label style="display:block;color:var(--text);margin-bottom:8px;font-weight:600;">Partner's Rashi</label>
+      <select id="compat-rashi2" style="padding:12px 16px;border-radius:8px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);font-size:1rem;min-width:180px;">
+        <option value="">Select...</option>
+      </select>
+    </div>
+  </div>
+  <div style="text-align:center;margin-bottom:32px;">
+    <button onclick="calculateCompatibility()" style="background:var(--gold);color:#000;padding:14px 48px;border:none;border-radius:8px;font-weight:600;font-size:1.05rem;cursor:pointer;">Check Compatibility</button>
+  </div>
+  
+  <div id="compat-result" style="display:none;max-width:700px;margin:0 auto;">
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:32px;">
+      <h3 id="compat-title" style="color:var(--gold);text-align:center;margin-bottom:16px;"></h3>
+      <div style="text-align:center;margin-bottom:24px;">
+        <div id="compat-score" style="font-size:3rem;font-weight:700;color:var(--gold);"></div>
+        <div id="compat-verdict" style="color:var(--text);font-size:1.1rem;margin-top:8px;"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" id="compat-reasons">
+        <div>
+          <h4 style="color:#4ade80;margin-bottom:12px;">✅ Why It Works</h4>
+          <ul id="compat-positive" style="list-style:none;padding:0;margin:0;color:var(--text);"></ul>
+        </div>
+        <div>
+          <h4 style="color:#f87171;margin-bottom:12px;">⚠️ Watch Out For</h4>
+          <ul id="compat-negative" style="list-style:none;padding:0;margin:0;color:var(--text);"></ul>
+        </div>
+      </div>
+      <p style="color:var(--muted);font-size:0.85rem;text-align:center;margin-top:24px;margin-bottom:0;">This is a basic rashi-level compatibility based on Vedic principles. Full Kundali Milan requires birth nakshatras and is done by experienced astrologers.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const RASHI_COMPAT = {
+  "Aries": {te:"మేషం",icon:"♈",element:"Fire",gana:"Deva",lord:"Mars",lordNature:"fiery and assertive"},
+  "Taurus": {te:"వృషభం",icon:"♉",element:"Earth",gana:"Manushya",lord:"Venus",lordNature:"loving and stable"},
+  "Gemini": {te:"మిథునం",icon:"♊",element:"Air",gana:"Manushya",lord:"Mercury",lordNature:"communicative and clever"},
+  "Cancer": {te:"కర్కాటకం",icon:"♋",element:"Water",gana:"Deva",lord:"Moon",lordNature:"emotional and nurturing"},
+  "Leo": {te:"సింహం",icon:"♌",element:"Fire",gana:"Manushya",lord:"Sun",lordNature:"proud and generous"},
+  "Virgo": {te:"కన్య",icon:"♍",element:"Earth",gana:"Manushya",lord:"Mercury",lordNature:"analytical and caring"},
+  "Libra": {te:"తుల",icon:"♎",element:"Air",gana:"Rakshasa",lord:"Venus",lordNature:"charming and balanced"},
+  "Scorpio": {te:"వృశ్చికం",icon:"♏",element:"Water",gana:"Rakshasa",lord:"Mars",lordNature:"intense and passionate"},
+  "Sagittarius": {te:"ధనుస్సు",icon:"♐",element:"Fire",gana:"Manushya",lord:"Jupiter",lordNature:"wise and optimistic"},
+  "Capricorn": {te:"మకరం",icon:"♑",element:"Earth",gana:"Rakshasa",lord:"Saturn",lordNature:"disciplined and patient"},
+  "Aquarius": {te:"కుంభం",icon:"♒",element:"Air",gana:"Rakshasa",lord:"Saturn",lordNature:"independent and visionary"},
+  "Pisces": {te:"మీనం",icon:"♓",element:"Water",gana:"Deva",lord:"Jupiter",lordNature:"compassionate and dreamy"}
+};
+
+// Populate dropdowns
+(function() {
+  var s1 = document.getElementById('compat-rashi1');
+  var s2 = document.getElementById('compat-rashi2');
+  if (!s1 || !s2) return;
+  Object.keys(RASHI_COMPAT).forEach(function(r) {
+    var d = RASHI_COMPAT[r];
+    s1.innerHTML += '<option value="'+r+'">'+d.icon+' '+r+' ('+d.te+')</option>';
+    s2.innerHTML += '<option value="'+r+'">'+d.icon+' '+r+' ('+d.te+')</option>';
+  });
+})();
+
+function calculateCompatibility() {
+  var r1 = document.getElementById('compat-rashi1').value;
+  var r2 = document.getElementById('compat-rashi2').value;
+  if (!r1 || !r2) { alert('Please select both rashis'); return; }
+  
+  var a = RASHI_COMPAT[r1], b = RASHI_COMPAT[r2];
+  var score = 50; // base
+  var positive = [], negative = [];
+  
+  // Element compatibility (Vedic: Fire+Air good, Earth+Water good, same good)
+  var goodPairs = [['Fire','Air'],['Earth','Water']];
+  if (a.element === b.element) {
+    score += 15;
+    positive.push('Both are <b>'+a.element+'</b> signs — you share the same core energy and approach to life.');
+  } else if (goodPairs.some(function(p){return (p[0]===a.element&&p[1]===b.element)||(p[0]===b.element&&p[1]===a.element);})) {
+    score += 12;
+    positive.push(a.element+' and '+b.element+' are naturally complementary elements in Vedic astrology — one fuels the other.');
+  } else {
+    score -= 8;
+    negative.push(a.element+' and '+b.element+' elements can clash — you may approach emotions and decisions very differently.');
+  }
+  
+  // Gana (temperament)
+  if (a.gana === b.gana) {
+    score += 10;
+    positive.push('Same gana ('+a.gana+') — your temperaments and values align naturally.');
+  } else if ((a.gana==='Deva'&&b.gana==='Manushya')||(a.gana==='Manushya'&&b.gana==='Deva')) {
+    score += 5;
+    positive.push('Deva-Manushya gana pair — generally harmonious with mutual respect.');
+  } else if (a.gana==='Rakshasa'||b.gana==='Rakshasa') {
+    score -= 10;
+    negative.push('Gana mismatch involving Rakshasa — temperaments differ; one may seem too intense for the other. Needs patience.');
+  }
+  
+  // Lord compatibility
+  if (a.lord === b.lord) {
+    score += 10;
+    positive.push('Both ruled by <b>'+a.lord+'</b> — you think alike and want similar things from life.');
+  } else if ((a.lord==='Jupiter'&&b.lord==='Venus')||(a.lord==='Venus'&&b.lord==='Jupiter')) {
+    score += 8;
+    positive.push('Jupiter-Venus combination — the two great benefics; brings wisdom meets love.');
+  } else if ((a.lord==='Saturn')&&(b.lord==='Sun'||b.lord==='Moon')||(b.lord==='Saturn')&&(a.lord==='Sun'||a.lord==='Moon')) {
+    score -= 8;
+    negative.push(a.lord+' vs '+b.lord+' — a classic friction pair; pace of life and priorities may differ significantly.');
+  }
+  
+  // Same rashi
+  if (r1 === r2) {
+    score += 5;
+    positive.push('Same rashi — deep mutual understanding, though you may mirror each other\'s flaws too.');
+  }
+  
+  score = Math.max(10, Math.min(98, score));
+  
+  var verdict, color;
+  if (score >= 75) { verdict = 'Excellent Match 💛'; color = '#4ade80'; }
+  else if (score >= 60) { verdict = 'Good Match 🙂'; color = '#a3e635'; }
+  else if (score >= 45) { verdict = 'Average — Needs Effort 🤝'; color = '#fbbf24'; }
+  else { verdict = 'Challenging — Needs Understanding ⚠️'; color = '#f87171'; }
+  
+  document.getElementById('compat-title').innerHTML = a.icon+' '+r1+' ('+a.te+') + '+b.icon+' '+r2+' ('+b.te+')';
+  document.getElementById('compat-score').textContent = score + '%';
+  document.getElementById('compat-score').style.color = color;
+  document.getElementById('compat-verdict').textContent = verdict;
+  
+  var posHtml = positive.length ? positive.map(function(p){return '<li style="padding:8px 0;border-bottom:1px solid var(--border);font-size:0.92rem;">✓ '+p+'</li>';}).join('') : '<li style="color:var(--muted);font-size:0.92rem;">No strong positives found — focus on understanding each other.</li>';
+  var negHtml = negative.length ? negative.map(function(n){return '<li style="padding:8px 0;border-bottom:1px solid var(--border);font-size:0.92rem;">• '+n+'</li>';}).join('') : '<li style="color:var(--muted);font-size:0.92rem;">No major concerns — a naturally smooth pairing.</li>';
+  
+  document.getElementById('compat-positive').innerHTML = posHtml;
+  document.getElementById('compat-negative').innerHTML = negHtml;
+  document.getElementById('compat-result').style.display = 'block';
+  document.getElementById('compat-result').scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+
 <div class="horoscope-cta">
   <div class="horoscope-cta-box">
     <h3>Need Personal Horoscope Reading?</h3>
