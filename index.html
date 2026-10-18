@@ -68,7 +68,7 @@
       <li><a href="index.html">Home</a></li>
       <li class="has-dropdown">
         <a href="stories.html">News ▾</a>
-        <ul class="dropdown">
+        <ul class="dropdown" style="display:none;position:absolute;top:100%;left:0;background:#1a1a2e;border:1px solid #333;border-radius:8px;min-width:220px;padding:8px 0;z-index:1000;list-style:none;margin:0;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
           <li><a href="stories.html">All Stories</a></li>
           <li><a href="stories.html#cat-community">Community News</a></li>
           <li><a href="stories.html#cat-politics">Politics</a></li>
@@ -80,7 +80,7 @@
       <li><a href="channels.html">Channels</a></li>
       <li class="has-dropdown">
         <a href="#">Services ▾</a>
-        <ul class="dropdown">
+        <ul class="dropdown" style="display:none;position:absolute;top:100%;left:0;background:#1a1a2e;border:1px solid #333;border-radius:8px;min-width:220px;padding:8px 0;z-index:1000;list-style:none;margin:0;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
           <li><a href="horoscope.html">Horoscope</a></li>
           <li><a href="matrimony.html">Matrimony</a></li>
         </ul>
@@ -507,5 +507,15 @@
 })();
 </script>
 
+
+<script>
+// Dropdown hover
+document.querySelectorAll('.has-dropdown').forEach(function(item) {
+  var dropdown = item.querySelector('.dropdown');
+  if (!dropdown) return;
+  item.addEventListener('mouseenter', function() { dropdown.style.display = 'block'; });
+  item.addEventListener('mouseleave', function() { dropdown.style.display = 'none'; });
+});
+</script>
 </body>
 </html>
