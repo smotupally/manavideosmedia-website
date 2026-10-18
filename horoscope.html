@@ -29,6 +29,13 @@
 .rashi-modal-close { position: absolute; top: 12px; right: 12px; background: var(--gold); color: #000; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 1.2rem; cursor: pointer; z-index: 10; }
 .rashi-modal-body { padding: 20px; }
 .rashi-modal-body h3 { color: var(--gold); text-align: center; margin-bottom: 16px; }
+.reel-card { display: block; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; text-decoration: none; transition: transform 0.2s, border-color 0.2s; }
+.reel-card:hover { transform: translateY(-4px); border-color: var(--gold); }
+.reel-card-thumb { background: linear-gradient(135deg, #1a1a2e, #16213e); aspect-ratio: 9/12; display: flex; align-items: center; justify-content: center; position: relative; }
+.reel-card-icon { font-size: 3rem; opacity: 0.3; }
+.reel-card-play { position: absolute; font-size: 2.5rem; color: var(--gold); background: rgba(0,0,0,0.6); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.reel-card-label { color: var(--gold); font-weight: 600; text-align: center; padding: 12px 8px 4px; font-size: 0.95rem; }
+.reel-card-sub { color: var(--muted); text-align: center; padding: 0 8px 12px; font-size: 0.8rem; }
 /* Use standard .grid for reels layout */
 </style>
 </head>
@@ -180,24 +187,20 @@ function openRashi(rashiName) {
   
   if (reels.length > 0) {
     let reelsHtml = reels.map(r => `
-      <div style="margin-bottom:24px;">
-        <div style="color:var(--gold);font-weight:600;text-align:center;margin-bottom:8px;font-size:0.9rem;">${r.label}</div>
-        <blockquote class="instagram-media" data-instgrm-permalink="${r.url}" data-instgrm-version="14" style="background:#fff;border-radius:8px;margin:0 auto;max-width:400px;min-height:400px;"></blockquote>
-      </div>
+      <a href="${r.url}" target="_blank" rel="noopener" class="reel-card">
+        <div class="reel-card-thumb">
+          <span class="reel-card-icon">${rashi.icon}</span>
+          <span class="reel-card-play">▶</span>
+        </div>
+        <div class="reel-card-label">${r.label}</div>
+        <div class="reel-card-sub">${rashi.en} • @manavideos_horoscope</div>
+      </a>
     `).join('');
     body.innerHTML = `
       <h3>${rashi.icon} ${rashi.en} (${rashi.te})</h3>
-      <div style="display:flex;flex-direction:column;gap:16px;">${reelsHtml}</div>
-    `;
-    function tryProcess(attempts) {
-      if (window.instgrm && window.instgrm.Embeds) {
-        window.instgrm.Embeds.process();
-      } else if (attempts > 0) {
-        setTimeout(() => tryProcess(attempts - 1), 500);
-      }
-    }
-    tryProcess(10);
-  } else {
+      <div class="grid reels-grid">${reelsHtml}</div>
+      <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin-top:16px;">Click a reel to watch on Instagram</p>
+    `; else {
     body.innerHTML = `
       <h3>${rashi.icon} ${rashi.en} (${rashi.te})</h3>
       <p style="text-align:center;color:var(--muted);padding:20px;">
