@@ -170,7 +170,7 @@
   <h2>Create Your Free Profile</h2>
   <div class="mat-form">
     <h3>Quick Match Request</h3>
-    <form action="mailto:manavideosmedia@gmail.com" method="post" enctype="text/plain">
+    <form id="matrimony-form" onsubmit="return submitMatrimony(event)">
       <div class="form-row">
         <div class="form-group">
           <label>Looking for</label>
@@ -298,6 +298,25 @@ document.addEventListener('click', function(e) {
     });
   }
 });
+</script>
+
+<script>
+function submitMatrimony(e) {
+  e.preventDefault();
+  var form = document.getElementById('matrimony-form');
+  var data = new FormData(form);
+  var subject = 'Matrimony: ' + data.get('looking_for') + ' request from ' + data.get('name');
+  var body = 'Looking for: ' + data.get('looking_for') + '\n' +
+             'Name: ' + data.get('name') + '\n' +
+             'Email: ' + data.get('email') + '\n' +
+             'Phone: ' + (data.get('phone') || 'N/A') + '\n' +
+             'Age Range: ' + data.get('age_range') + '\n' +
+             'Location: ' + (data.get('location') || 'N/A') + '\n' +
+             'Profession: ' + (data.get('profession') || 'N/A') + '\n' +
+             'About: ' + (data.get('about') || 'N/A');
+  window.location.href = 'mailto:manavideosmedia@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  return false;
+}
 </script>
 </body>
 </html>
