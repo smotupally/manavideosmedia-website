@@ -7,6 +7,7 @@
 <meta name="description" content="Daily Telugu horoscope - select your rashi to watch the video prediction from @manavideos_horoscope">
 <link rel="stylesheet" href="styles.css">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
+<script async src="https://www.instagram.com/embed.js"></script>
 <style>
 .horoscope-hero { text-align: center; padding: 48px 20px 32px; }
 .horoscope-hero h1 { color: var(--gold); font-size: 2.2rem; margin-bottom: 8px; }
@@ -142,10 +143,17 @@ function openRashi(rashiName) {
   if (url) {
     body.innerHTML = `
       <h3>${rashi.icon} ${rashi.en} (${rashi.te})</h3>
-      <blockquote class="instagram-media" data-instgrm-permalink="${url}" data-instgrm-version="14" style="margin:0 auto;max-width:400px;"></blockquote>
-      <script async src="https://www.instagram.com/embed.js"><\/script>
+      <blockquote class="instagram-media" data-instgrm-permalink="${url}" data-instgrm-version="14" style="background:#fff;border-radius:8px;margin:0 auto;max-width:400px;min-height:400px;"></blockquote>
     `;
-    if (window.instgrm) window.instgrm.Embeds.process();
+    // Process the new embed - retry if instgrm not loaded yet
+    function tryProcess(attempts) {
+      if (window.instgrm && window.instgrm.Embeds) {
+        window.instgrm.Embeds.process();
+      } else if (attempts > 0) {
+        setTimeout(() => tryProcess(attempts - 1), 500);
+      }
+    }
+    tryProcess(10);
   } else {
     body.innerHTML = `
       <h3>${rashi.icon} ${rashi.en} (${rashi.te})</h3>
