@@ -65,10 +65,10 @@
         <a href="stories.html">News ▾</a>
         <ul class="dropdown" style="display:none;position:absolute;top:100%;left:0;background:#1a1a2e;border:1px solid #333;border-radius:8px;min-width:220px;padding:8px 0;z-index:1000;list-style:none;margin:0;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
           <li><a href="stories.html">All Stories</a></li>
-          <li><a href="stories.html#cat-community">Community News</a></li>
-          <li><a href="stories.html#cat-politics">Politics</a></li>
-          <li><a href="stories.html#cat-nri">NRI Hub</a></li>
-          <li><a href="stories.html#cat-visa">Visa & Immigration</a></li>
+          <li><a href="stories.html?cat=community">Community News</a></li>
+          <li><a href="stories.html?cat=politics">Politics</a></li>
+          <li><a href="stories.html?cat=nri">NRI Hub</a></li>
+          <li><a href="stories.html?cat=visa">Visa & Immigration</a></li>
           <li><a href="archive.html">Archive</a></li>
         </ul>
       </li>
@@ -269,19 +269,28 @@ document.querySelectorAll('.has-dropdown').forEach(function(item) {
   var link = item.querySelector('a');
   if (!dropdown || !link) return;
   
-  // Desktop hover - position under parent
-  item.addEventListener('mouseenter', function() {
+  // Desktop hover - position directly under parent (no gap)
+  var hideTimer = null;
+  function showDropdown() {
     if (window.innerWidth > 768) {
+      clearTimeout(hideTimer);
       var rect = item.getBoundingClientRect();
       dropdown.style.position = 'fixed';
-      dropdown.style.top = (rect.bottom + 8) + 'px';
+      dropdown.style.top = rect.bottom + 'px';
       dropdown.style.left = rect.left + 'px';
       dropdown.style.display = 'block';
     }
-  });
-  item.addEventListener('mouseleave', function() {
-    if (window.innerWidth > 768) dropdown.style.display = 'none';
-  });
+  }
+  function hideDropdown() {
+    if (window.innerWidth > 768) {
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(function() { dropdown.style.display = 'none'; }, 200);
+    }
+  }
+  item.addEventListener('mouseenter', showDropdown);
+  item.addEventListener('mouseleave', hideDropdown);
+  dropdown.addEventListener('mouseenter', showDropdown);
+  dropdown.addEventListener('mouseleave', hideDropdown);
   
   // Mobile tap
   link.addEventListener('click', function(e) {
