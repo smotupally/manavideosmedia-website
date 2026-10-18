@@ -338,55 +338,85 @@
 
 <script>
 // Dropdown: hover on desktop, tap on mobile
-document.querySelectorAll('.has-dropdown').forEach(function(item) {
-  var dropdown = item.querySelector('.dropdown');
-  var link = item.querySelector('a');
-  if (!dropdown || !link) return;
+(function() {
+  var isMobile = function() { return window.innerWidth <= 768; };
   
-  // Desktop hover - position directly under parent (no gap)
-  var hideTimer = null;
-  function showDropdown() {
-    if (window.innerWidth > 768) {
-      clearTimeout(hideTimer);
-      var rect = item.getBoundingClientRect();
-      dropdown.style.position = 'fixed';
-      dropdown.style.top = rect.bottom + 'px';
-      dropdown.style.left = rect.left + 'px';
-      dropdown.style.display = 'block';
+  document.querySelectorAll('.has-dropdown').forEach(function(item) {
+    var dropdown = item.querySelector('.dropdown');
+    var link = item.querySelector(':scope > a');
+    if (!dropdown || !link) return;
+    
+    // Make it clear this is tappable
+    link.style.cursor = 'pointer';
+    link.setAttribute('aria-haspopup', 'true');
+    
+    // Desktop hover
+    var hideTimer = null;
+    function showDropdown() {
+      if (!isMobile()) {
+        clearTimeout(hideTimer);
+        var rect = item.getBoundingClientRect();
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = rect.bottom + 'px';
+        dropdown.style.left = rect.left + 'px';
+        dropdown.style.display = 'block';
+      }
     }
-  }
-  function hideDropdown() {
-    if (window.innerWidth > 768) {
-      clearTimeout(hideTimer);
-      hideTimer = setTimeout(function() { dropdown.style.display = 'none'; }, 200);
+    function hideDropdown() {
+      if (!isMobile()) {
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(function() { dropdown.style.display = 'none'; }, 200);
+      }
     }
-  }
-  item.addEventListener('mouseenter', showDropdown);
-  item.addEventListener('mouseleave', hideDropdown);
-  dropdown.addEventListener('mouseenter', showDropdown);
-  dropdown.addEventListener('mouseleave', hideDropdown);
-  
-  // Mobile tap
-  link.addEventListener('click', function(e) {
-    if (window.innerWidth <= 768) {
+    item.addEventListener('mouseenter', showDropdown);
+    item.addEventListener('mouseleave', hideDropdown);
+    
+    // Mobile: tap toggles (use touchstart for instant iOS response + click fallback)
+    var tapped = false;
+    function toggleDropdown(e) {
+      if (!isMobile()) return;
       e.preventDefault();
+      e.stopPropagation();
+      if (tapped) return;
+      tapped = true;
+      setTimeout(function() { tapped = false; }, 300);
+      
       var isOpen = dropdown.style.display === 'block';
-      // Close all others
       document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {
         d.style.display = 'none';
+        d.classList.remove('mobile-open');
       });
-      dropdown.style.display = isOpen ? 'none' : 'block';
+      if (!isOpen) {
+        // Reset to absolute positioning for mobile (not fixed)
+        dropdown.style.position = 'absolute';
+        dropdown.style.top = '100%';
+        dropdown.style.left = '0';
+        dropdown.style.display = 'block';
+        dropdown.classList.add('mobile-open');
+      }
+    }
+    link.addEventListener('touchstart', toggleDropdown, {passive: false});
+    link.addEventListener('click', toggleDropdown);
+  });
+  
+  // Close on tap elsewhere
+  document.addEventListener('touchstart', function(e) {
+    if (isMobile() && !e.target.closest('.has-dropdown')) {
+      document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {
+        d.style.display = 'none';
+        d.classList.remove('mobile-open');
+      });
+    }
+  }, {passive: true});
+  document.addEventListener('click', function(e) {
+    if (isMobile() && !e.target.closest('.has-dropdown')) {
+      document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {
+        d.style.display = 'none';
+        d.classList.remove('mobile-open');
+      });
     }
   });
-});
-// Close dropdowns when tapping elsewhere on mobile
-document.addEventListener('click', function(e) {
-  if (window.innerWidth <= 768 && !e.target.closest('.has-dropdown')) {
-    document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {
-      d.style.display = 'none';
-    });
-  }
-});
+})();
 </script>
 </body>
 </html>
