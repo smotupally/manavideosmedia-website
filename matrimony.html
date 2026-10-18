@@ -269,9 +269,15 @@ document.querySelectorAll('.has-dropdown').forEach(function(item) {
   var link = item.querySelector('a');
   if (!dropdown || !link) return;
   
-  // Desktop hover
+  // Desktop hover - position under parent
   item.addEventListener('mouseenter', function() {
-    if (window.innerWidth > 768) dropdown.style.display = 'block';
+    if (window.innerWidth > 768) {
+      var rect = item.getBoundingClientRect();
+      dropdown.style.position = 'fixed';
+      dropdown.style.top = (rect.bottom + 8) + 'px';
+      dropdown.style.left = rect.left + 'px';
+      dropdown.style.display = 'block';
+    }
   });
   item.addEventListener('mouseleave', function() {
     if (window.innerWidth > 768) dropdown.style.display = 'none';
