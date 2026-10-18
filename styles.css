@@ -814,3 +814,23 @@ body { padding-bottom: 44px; }
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- Ad slot (article pages) ---------- */
+.ad-slot {
+  margin: 32px 0 8px;
+  text-align: center;
+}
+.ad-slot a {
+  display: block;
+  text-decoration: none;
+}
+.ad-slot img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: opacity 0.2s;
+}
+.ad-slot a:hover img {
+  opacity: 0.92;
+}

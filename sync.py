@@ -188,6 +188,14 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
     import json as _js
     headline_json = _js.dumps(headline)
     # Build article body section - with reel sidebar for roundups, related stories for static posts
+    # Ad banner HTML for roundups (inside article column, below stories)
+    ad_banner_html = """
+      <div class="ad-slot">
+        <a href="mailto:manavideosmedia@gmail.com?subject=Advertising%20on%20Mana%20Videos%20Media">
+          <img src="../images/ad-placeholder.png" alt="Advertise with Mana Videos Media - contact manavideosmedia@gmail.com" style="width:100%;height:auto;border-radius:8px;">
+        </a>
+      </div>"""
+
     if reel_url:
         # Roundup: two-column layout with reel sidebar
         # Parse edition and date from slug (e.g., roundup-2026-10-17-morning)
@@ -204,6 +212,7 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
         <div class="article-body">
 {body_paras}
 {extra_html}
+{ad_banner_html}
         </div>
         <aside class="reel-sidebar" style="min-width:0;">
           <div class="reel-sidebar-sticky" style="position:sticky;top:20px;max-height:calc(100vh - 40px);overflow-y:auto;">
