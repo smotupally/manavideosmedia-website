@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Today's Horoscope - Mana Videos Media</title>
+<meta name="description" content="Daily Telugu horoscope - select your rashi to watch the video prediction from @manavideos_horoscope">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<style>
+.horoscope-hero { text-align: center; padding: 48px 20px 32px; }
+.horoscope-hero h1 { color: var(--gold); font-size: 2.2rem; margin-bottom: 8px; }
+.horoscope-hero p { color: var(--muted); font-size: 1.1rem; }
+.rashi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; padding: 0 20px 40px; max-width: 1000px; margin: 0 auto; }
+.rashi-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px 12px; text-align: center; cursor: pointer; transition: transform 0.2s, border-color 0.2s; }
+.rashi-card:hover { transform: translateY(-4px); border-color: var(--gold); }
+.rashi-card .rashi-icon { font-size: 2.5rem; margin-bottom: 8px; }
+.rashi-card .rashi-name { font-weight: 600; color: var(--text); }
+.rashi-card .rashi-telugu { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+.horoscope-cta { max-width: 1000px; margin: 0 auto 40px; padding: 0 20px; }
+.horoscope-cta-box { background: linear-gradient(135deg, #1a1a2e, #16213e); border: 1px solid var(--gold); border-radius: 12px; padding: 32px; text-align: center; }
+.horoscope-cta-box h3 { color: var(--gold); margin-bottom: 8px; }
+.horoscope-cta-box p { color: var(--muted); margin-bottom: 16px; }
+/* Modal */
+.rashi-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+.rashi-modal.active { display: flex; }
+.rashi-modal-content { background: var(--card-bg); border-radius: 12px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; }
+.rashi-modal-close { position: absolute; top: 12px; right: 12px; background: var(--gold); color: #000; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 1.2rem; cursor: pointer; z-index: 10; }
+.rashi-modal-body { padding: 20px; }
+.rashi-modal-body h3 { color: var(--gold); text-align: center; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="container">
+    <span class="date">Friday, October 16, 2026 | శుక్రవారం</span>
+    <span class="social">
+      <a href="https://www.instagram.com/manavideos_media" target="_blank" rel="noopener">Instagram</a>
+      <a href="contact.html">Contact</a>
+    </span>
+  </div>
+</div>
+
+<header class="brandbar">
+  <div class="container">
+    <div class="logo"><span class="brand-logo-img"></span>MANA VIDEOS <span class="gold">MEDIA</span></div>
+    <div class="tagline">USA Telugu News, Every Morning &amp; Evening &nbsp;•&nbsp; <span class="te">అమెరికా తెలుగు వార్తలు</span></div>
+  </div>
+</header>
+
+<nav class="mainnav" aria-label="Main navigation">
+  <div class="container">
+    <ul class="navlinks">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="stories.html">Stories</a></li><li><a href="archive.html">Archive</a></li>
+      <li><a href="channels.html">Channels</a></li>
+      <li><a href="horoscope.html">Horoscope</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+<main>
+<div class="horoscope-hero">
+  <h1>🔮 Today's Horoscope</h1>
+  <p>Select your rashi to watch today's video prediction</p>
+  <p style="font-size:0.9rem;">From <a href="https://www.instagram.com/manavideos_horoscope" target="_blank" style="color:var(--gold);">@manavideos_horoscope</a></p>
+</div>
+
+<div class="rashi-grid" id="rashi-grid">
+  <!-- Populated by JS -->
+</div>
+
+<div class="horoscope-cta">
+  <div class="horoscope-cta-box">
+    <h3>Need Personal Horoscope Reading?</h3>
+    <p>Talk to experienced astrologers</p>
+    <a href="contact.html" class="btn" style="background:var(--gold);color:#000;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;">Contact Now</a>
+  </div>
+</div>
+</main>
+
+<div class="rashi-modal" id="rashi-modal">
+  <div class="rashi-modal-content">
+    <button class="rashi-modal-close" onclick="closeRashiModal()">✕</button>
+    <div class="rashi-modal-body" id="rashi-modal-body">
+      <!-- Instagram embed loaded here -->
+    </div>
+  </div>
+</div>
+
+<script>
+const RASHIS = [
+  {en: "Aries", te: "మేషం", icon: "♈"},
+  {en: "Taurus", te: "వృషభం", icon: "♉"},
+  {en: "Gemini", te: "మిథునం", icon: "♊"},
+  {en: "Cancer", te: "కర్కాటకం", icon: "♋"},
+  {en: "Leo", te: "సింహం", icon: "♌"},
+  {en: "Virgo", te: "కన్య", icon: "♍"},
+  {en: "Libra", te: "తుల", icon: "♎"},
+  {en: "Scorpio", te: "వృశ్చికం", icon: "♏"},
+  {en: "Sagittarius", te: "ధనుస్సు", icon: "♐"},
+  {en: "Capricorn", te: "మకరం", icon: "♑"},
+  {en: "Aquarius", te: "కుంభం", icon: "♒"},
+  {en: "Pisces", te: "మీనం", icon: "♓"},
+];
+
+// Rashi -> Instagram reel/post URL mapping
+// Update this when new horoscope reels are posted
+const RASHI_URLS = {
+  "Aries": "",
+  "Taurus": "",
+  "Gemini": "",
+  "Cancer": "",
+  "Leo": "",
+  "Virgo": "",
+  "Libra": "",
+  "Scorpio": "",
+  "Sagittarius": "",
+  "Capricorn": "",
+  "Aquarius": "",
+  "Pisces": "",
+};
+
+function renderRashis() {
+  const grid = document.getElementById('rashi-grid');
+  grid.innerHTML = RASHIS.map(r => `
+    <div class="rashi-card" onclick="openRashi('${r.en}')">
+      <div class="rashi-icon">${r.icon}</div>
+      <div class="rashi-name">${r.en}</div>
+      <div class="rashi-telugu">${r.te}</div>
+    </div>
+  `).join('');
+}
+
+function openRashi(rashiName) {
+  const url = RASHI_URLS[rashiName];
+  const modal = document.getElementById('rashi-modal');
+  const body = document.getElementById('rashi-modal-body');
+  const rashi = RASHIS.find(r => r.en === rashiName);
+  
+  if (url) {
+    body.innerHTML = `
+      <h3>${rashi.icon} ${rashi.en} (${rashi.te})</h3>
+      <blockquote class="instagram-media" data-instgrm-permalink="${url}" data-instgrm-version="14" style="margin:0 auto;max-width:400px;"></blockquote>
+      <script async src="https://www.instagram.com/embed.js"><\/script>
+    `;
+    if (window.instgrm) window.instgrm.Embeds.process();
+  } else {
+    body.innerHTML = `
+      <h3>${rashi.icon} ${rashi.en} (${rashi.te})</h3>
+      <p style="text-align:center;color:var(--muted);padding:20px;">
+        Today's video for ${rashi.en} is coming soon.<br><br>
+        <a href="https://www.instagram.com/manavideos_horoscope" target="_blank" style="color:var(--gold);">Follow @manavideos_horoscope</a> for daily updates.
+      </p>
+    `;
+  }
+  modal.classList.add('active');
+}
+
+function closeRashiModal() {
+  document.getElementById('rashi-modal').classList.remove('active');
+}
+
+document.getElementById('rashi-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeRashiModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeRashiModal();
+});
+
+renderRashis();
+</script>
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="brand-logo-img"></span>MANA VIDEOS <span class="gold">MEDIA</span></div>
+        <p>Helping our people grow every day with the knowledge we give — genuine, honest day-to-day info for the Telugu diaspora.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="stories.html">Stories</a></li>
+          <li><a href="channels.html">Channels</a></li>
+      <li><a href="horoscope.html">Horoscope</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Categories</h4>
+        <ul>
+          <li><a href="stories.html">Community News</a></li>
+          <li><a href="stories.html">Politics</a></li>
+          <li><a href="stories.html">NRI Hub</a></li>
+          <li><a href="stories.html">Visa &amp; Immigration</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://www.instagram.com/manavideos_media" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="mailto:manavideosmedia@gmail.com">manavideosmedia@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copy">© 2026 Mana Videos Media • manavideosmedia.com • All rights reserved.</div>
+  </div>
+</footer>
+</body>
+</html>
