@@ -208,7 +208,7 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
             date_lbl = date_obj.strftime("%b %d").replace(" 0", " ")
         else:
             edition, date_lbl = "Edition", date_str
-        article_body_section = f"""<div class="article-with-reel" style="display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start;width:100%;">
+        article_body_section = f"""<style>@media (max-width: 768px) { .article-with-reel { grid-template-columns: 1fr !important; } .reel-sidebar-sticky { position: static !important; max-height: none !important; } }</style><div class="article-with-reel" style="display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start;width:100%;">
         <div class="article-body">
 {body_paras}
 {extra_html}
