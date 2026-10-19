@@ -870,6 +870,66 @@ def push_to_github(new_articles=None):
         print("Push stderr:", result.stderr[:500])
     return result.returncode == 0
 
+
+def sanity_check():
+    """Validate all articles are in sync across disk, stories.html, archive.html, homepage.
+    Returns (ok, issues) where issues is a list of problem descriptions.
+    Auto-fixes what's fixable, reports the rest."""
+    import re, os
+    issues = []
+    fixed = []
+    
+    articles = set(f for f in os.listdir(SITE / "articles") if f.endswith('.html'))
+    
+    # Check stories.html
+    stories_html = (SITE / "stories.html").read_text()
+    story_links = set(re.findall(r'articles/([a-z0-9\-]+\.html)', stories_html))
+    missing_stories = articles - story_links
+    broken_stories = story_links - articles
+    if missing_stories:
+        issues.append(f"{len(missing_stories)} articles missing from stories.html: {sorted(missing_stories)[:3]}")
+    if broken_stories:
+        issues.append(f"{len(broken_stories)} broken links in stories.html: {sorted(broken_stories)[:3]}")
+    
+    # Check archive.html
+    archive_html = (SITE / "archive.html").read_text()
+    archive_links = set(re.findall(r'articles/([a-z0-9\-]+\.html)', archive_html))
+    missing_archive = articles - archive_links
+    if missing_archive:
+        issues.append(f"{len(missing_archive)} articles missing from archive.html")
+        # Auto-fix: rebuild archive
+        update_archive()
+        fixed.append("rebuilt archive.html")
+    
+    # Check homepage Latest Stories matches stories.html top cards
+    index_html = (SITE / "index.html").read_text()
+    # Get first 6 story slugs from stories.html (in order)
+    story_order = []
+    for m in re.finditer(r'articles/([a-z0-9\-]+\.html)', stories_html):
+        slug = m.group(1)
+        if slug not in story_order:
+            story_order.append(slug)
+    top6 = story_order[:6]
+    # Check they're all in index.html
+    missing_home = [s for s in top6 if s not in index_html]
+    if missing_home:
+        issues.append(f"Homepage missing {len(missing_home)} of top-6 stories: {missing_home[:3]}")
+        # Auto-fix: rebuild homepage sections
+        update_homepage_stories()
+        update_homepage_categories()
+        fixed.append("rebuilt homepage sections")
+    
+    # Re-verify after fixes
+    if fixed:
+        stories_html = (SITE / "stories.html").read_text()
+        story_links = set(re.findall(r'articles/([a-z0-9\-]+\.html)', stories_html))
+        archive_html = (SITE / "archive.html").read_text()
+        archive_links = set(re.findall(r'articles/([a-z0-9\-]+\.html)', archive_html))
+        articles = set(f for f in os.listdir(SITE / "articles") if f.endswith('.html'))
+    
+    ok = (articles == story_links == archive_links) and not broken_stories
+    return ok, issues, fixed
+
 def main():
     # Prevent overlapping cron runs
     lock_file = open(SITE / ".sync.lock", "w")
@@ -894,6 +954,19 @@ def main():
             print("SYNC: push failed, state NOT saved (will retry next run)")
     else:
         print("SYNC: nothing new")
+    
+    # SANITY CHECK: validate everything is in sync (user 2026-10-19)
+    ok, issues, fixed = sanity_check()
+    if fixed:
+        print(f"SANITY: auto-fixed: {', '.join(fixed)}")
+        # Push the fixes
+        push_to_github()
+    if not ok:
+        print(f"SANITY FAIL: {len(issues)} issues:")
+        for i in issues:
+            print(f"  - {i}")
+    else:
+        print(f"SANITY OK: {len(set(f for f in os.listdir(SITE / 'articles') if f.endswith('.html')))} articles in sync")
 
 if __name__ == "__main__":
     main()
