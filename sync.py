@@ -382,6 +382,9 @@ def sync_reels(state):
         if not stories:
             continue
         reel_url = get_reel_url(run_dir)
+        # SKIP unpublished reels — only sync after the reel is actually live on Instagram
+        if not reel_url:
+            continue
         # Date from run_id like run_20261016_pm
         m = re.search(r'run_(\d{4})(\d{2})(\d{2})_(am|pm)', run_id)
         if m:
@@ -424,6 +427,10 @@ def sync_posts(state):
         caption = caption_file.read_text().strip()
         if not caption:
             continue
+        # SKIP unpublished posts — only sync after the post is actually live on Instagram
+        post_url = get_post_url(post_dir)
+        if not post_url:
+            continue
         # Headline = first line of caption
         headline = caption.split('\n')[0][:120]
         headline = re.sub(r'[^\w\s\-–—.,!?\'"()]', '', headline).strip()
@@ -456,7 +463,6 @@ def sync_posts(state):
             break
         else:
             image_html = ""
-        post_url = get_post_url(post_dir)
         extra = ""
         if post_url:
             extra += f'\n<p><a href="{post_url}" target="_blank" rel="noopener">View on Instagram</a></p>'
@@ -574,9 +580,14 @@ def update_homepage_stories():
     ihtml = ip.read_text()
     # Find the Latest Stories grid (the one after <h2>Latest Stories</h2>)
     # Pattern: <h2>Latest Stories</h2> ... <div class="grid"> ... </div>
-    pattern = r'(<h2>Latest Stories</h2>.*?<div class="grid">\n)(.*?)(\n        </div>)'
+    pattern = r'(<h2>Latest Stories</h2>.*?<div class="grid">\n)(.*?)(\n      </div>)'
     m = re.search(pattern, ihtml, re.DOTALL)
     if not m:
+        # Fallback: try 8-space indent variant
+        pattern = r'(<h2>Latest Stories</h2>.*?<div class="grid">\n)(.*?)(\n        </div>)'
+        m = re.search(pattern, ihtml, re.DOTALL)
+    if not m:
+        print("WARNING: Latest Stories grid pattern not found in index.html")
         return
     new_cards = "\n".join(["        " + c for c in cards])
     new_ihtml = ihtml[:m.start(2)] + new_cards + ihtml[m.end(2):]
@@ -634,11 +645,13 @@ def update_archive():
                 date_str = m2.group(1).strip()
         if not date_str:
             continue
-        # Parse date (MM/DD/YYYY or YYYY-MM-DD)
+        # Parse date (MM/DD/YYYY, YYYY-MM-DD, or "Friday, October 16, 2026")
         dt = None
-        for fmt in ("%m/%d/%Y", "%Y-%m-%d"):
+        # Strip weekday prefix like "Friday, October 16, 2026 | ..." -> "October 16, 2026"
+        clean_date = re.sub(r'^[A-Za-z]+,\s*', '', date_str).split('|')[0].strip()
+        for fmt in ("%m/%d/%Y", "%Y-%m-%d", "%B %d, %Y"):
             try:
-                dt = datetime.strptime(date_str, fmt)
+                dt = datetime.strptime(clean_date, fmt)
                 break
             except:
                 continue
