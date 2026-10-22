@@ -88,7 +88,6 @@ a:hover { color: var(--gold); }
   background-position: center;
   display: inline-block;
 }
-,
 .brandbar .tagline {
   color: #ffe9ec;
   font-size: 14px;
@@ -360,7 +359,6 @@ footer {
   .chan-grid { grid-template-columns: repeat(3, 1fr); }
   .values { grid-template-columns: repeat(3, 1fr); }
   .foot-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
-  ,
 .hero { padding: 72px 0 60px; }
 }
 
@@ -901,4 +899,24 @@ ul.navlinks .dropdown,
 @media (max-width: 768px) {
   .navlinks .has-dropdown > .dropdown.mobile-open { display: block !important; }
   .navlinks .dropdown { max-width: calc(100vw - 16px); }
+}
+
+/* Mobile header/footer tightening (2026-10-22): the phone header stack was
+   246px and the footer 832px — trim dead vertical space, brand unchanged. */
+@media (max-width: 768px) {
+  .topbar { padding: 4px 0 !important; }
+  .brandbar { padding: 12px 0; }
+  .brandbar .logo { letter-spacing: 1px; font-size: 21px; }
+  .brandbar .tagline { font-size: 12px; margin-top: 2px; line-height: 1.35; }
+  .mainnav .navlinks a { padding: 10px 12px; }
+  .hero { padding: 26px 0 22px; }
+  .hero h1 { font-size: 25px; }
+  .hero h1 .te { font-size: 19px; margin-top: 4px; }
+  .section { padding: 26px 0; }
+  .cta-band { padding: 24px 0; }
+  footer { padding: 24px 0 16px; font-size: 13px; }
+  .foot-grid { gap: 16px; margin-bottom: 16px; }
+  .foot-grid h4 { margin-bottom: 8px; }
+  .foot-grid li { margin-bottom: 5px; }
+  .copy { padding-top: 12px; }
 }

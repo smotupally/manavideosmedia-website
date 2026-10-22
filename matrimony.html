@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Telugu Matrimony - Mana Videos Media</title>
 <meta name="description" content="Find trusted Telugu matches in USA & India - Mana Videos Matrimony">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=20261022b">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <style>
 .mat-hero { text-align: center; padding: 64px 20px 48px; background: linear-gradient(135deg, #1a1a2e, #16213e); }
@@ -297,18 +297,17 @@
     item.addEventListener('mouseleave', hideDropdown);
     
     // Mobile: tap toggles (use touchstart for instant iOS response + click fallback)
-    var tapped = false;
+    var lastTouchToggle = 0;
     function toggleDropdown(e) {
       if (!isMobile()) return;
       e.preventDefault();
       e.stopPropagation();
-      if (tapped) return;
-      tapped = true;
-      setTimeout(function() { tapped = false; }, 300);
+      if (e.type === 'click' && Date.now() - lastTouchToggle < 700) return;
+      if (e.type === 'touchstart') lastTouchToggle = Date.now();
       
       var isOpen = dropdown.classList.contains('mobile-open');
       document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {
-        d.style.display = 'none';
+        d.style.removeProperty('display');
         d.classList.remove('mobile-open');
       });
       if (!isOpen) {
@@ -319,7 +318,7 @@
         dropdown.style.position = 'absolute';
         dropdown.style.top = '100%';
         dropdown.style.left = (panelLeft - liRect.left) + 'px';
-        dropdown.style.display = 'block';
+        dropdown.style.setProperty('display', 'block', 'important');
         dropdown.classList.add('mobile-open');
       }
     }
@@ -331,7 +330,7 @@
   document.addEventListener('touchstart', function(e) {
     if (isMobile() && !e.target.closest('.has-dropdown')) {
       document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {
-        d.style.display = 'none';
+        d.style.removeProperty('display');
         d.classList.remove('mobile-open');
       });
     }
@@ -339,7 +338,7 @@
   document.addEventListener('click', function(e) {
     if (isMobile() && !e.target.closest('.has-dropdown')) {
       document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {
-        d.style.display = 'none';
+        d.style.removeProperty('display');
         d.classList.remove('mobile-open');
       });
     }
