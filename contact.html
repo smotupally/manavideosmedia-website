@@ -279,29 +279,6 @@
   }
 })();
 </script>
-
-<style>
-@media (max-width: 768px) {
-  .has-dropdown > a { pointer-events: auto; }
-  .has-dropdown .dropdown {
-    display: block !important;
-    position: static !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 0 0 16px !important;
-    margin: 0 !important;
-    min-width: 0 !important;
-  }
-  .has-dropdown .dropdown li { margin: 2px 0 !important; }
-  .has-dropdown .dropdown li a {
-    display: block !important;
-    padding: 6px 0 !important;
-    font-size: 14px !important;
-    color: #ccc !important;
-  }
-}
-</style>
 <script>
 // Dropdown: hover on desktop, tap on mobile
 (function() {
@@ -347,16 +324,19 @@
       tapped = true;
       setTimeout(function() { tapped = false; }, 300);
       
-      var isOpen = dropdown.style.display === 'block';
+      var isOpen = dropdown.classList.contains('mobile-open');
       document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {
         d.style.display = 'none';
         d.classList.remove('mobile-open');
       });
       if (!isOpen) {
-        // Reset to absolute positioning for mobile (not fixed)
+        // Mobile: absolute overlay panel under the item, clamped so the
+        // 220px panel never overflows the right edge of the screen
+        var liRect = item.getBoundingClientRect();
+        var panelLeft = Math.max(8, Math.min(liRect.left, window.innerWidth - 236));
         dropdown.style.position = 'absolute';
         dropdown.style.top = '100%';
-        dropdown.style.left = '0';
+        dropdown.style.left = (panelLeft - liRect.left) + 'px';
         dropdown.style.display = 'block';
         dropdown.classList.add('mobile-open');
       }

@@ -208,7 +208,7 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
             date_lbl = date_obj.strftime("%b %d").replace(" 0", " ")
         else:
             edition, date_lbl = "Edition", date_str
-        article_body_section = f"""<style>@media (max-width: 768px) { .article-with-reel { grid-template-columns: 1fr !important; } .reel-sidebar-sticky { position: static !important; max-height: none !important; } }</style><div class="article-with-reel" style="display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start;width:100%;">
+        article_body_section = f"""<style>@media (max-width: 768px) {{ .article-with-reel {{ grid-template-columns: 1fr !important; }} .reel-sidebar-sticky {{ position: static !important; max-height: none !important; }} }}</style><div class="article-with-reel" style="display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start;width:100%;">
         <div class="article-body">
 {body_paras}
 {extra_html}
@@ -549,19 +549,20 @@ def update_reels():
     for url in latest:
         if not url.endswith("/"):
             url += "/"
-        reels_html += f"""          <div class="reel-embed">
-            <blockquote class="instagram-media" data-instgrm-permalink="{url}" data-instgrm-version="14" style="margin:0"></blockquote>
-          </div>
+        reels_html += f"""        <blockquote class="instagram-media" data-instgrm-permalink="{url}" data-instgrm-version="14"></blockquote>
 """
-    # Replace the reels-static content
-    new_html = re.sub(
-        r'(<div class="reels-static">\n).*?(\n        </div>)',
+    # Replace the reels-grid content (homepage markup since the 2026-10-17 rebuild;
+    # the old "reels-static" pattern silently stopped matching — fixed 2026-10-22)
+    new_html, n_subs = re.subn(
+        r'(<div class="grid reels-grid">\n).*?(\n      </div>)',
         lambda m: m.group(1) + reels_html.rstrip("\n") + m.group(2),
         html,
         count=1,
         flags=re.DOTALL
     )
-    if new_html != html:
+    if n_subs == 0:
+        print("WARNING: update_reels could not find the reels-grid section in index.html — homepage reels NOT updated")
+    elif new_html != html:
         ip.write_text(new_html)
         print(f"Updated homepage reels: {len(latest)} latest")
 
@@ -842,7 +843,7 @@ def push_to_github(new_articles=None):
             fp = ARTICLES_DIR / f"{a['slug']}.html"
             if fp.exists():
                 files.append({"path": f"articles/{fp.name}", "content": fp.read_text()})
-    for f in ["stories.html", "sitemap.xml", "rss.xml"]:
+    for f in ["stories.html", "sitemap.xml", "rss.xml", "index.html", "archive.html", "about.html", "channels.html", "contact.html"]:
         fp = SITE / f
         if fp.exists():
             files.append({"path": f, "content": fp.read_text()})
@@ -919,6 +920,24 @@ def sanity_check():
         update_homepage_categories()
         fixed.append("rebuilt homepage sections")
     
+    # Check homepage Latest Reels shows the 3 most recent published reels
+    exp_reels = []
+    for run_dir in REEL_DIR.glob("run_*"):
+        u = get_reel_url(run_dir)
+        if not u:
+            continue
+        mm = re.search(r'run_(\d{8})_(am|pm)', run_dir.name)
+        if mm:
+            exp_reels.append((mm.group(1) + ("1" if mm.group(2) == "am" else "2"), u if u.endswith("/") else u + "/"))
+    exp_reels.sort(reverse=True)
+    exp_latest = [u for _, u in exp_reels[:3]]
+    shown_reels = re.findall(r'data-instgrm-permalink="(https://www\.instagram\.com/reel/[^"]+)"', index_html)
+    if len(exp_latest) == 3 and shown_reels[:3] != exp_latest:
+        issues.append(f"Homepage Latest Reels stale: shows {shown_reels[:3]}, expected {exp_latest}")
+        update_reels()
+        fixed.append("updated homepage Latest Reels")
+        index_html = (SITE / "index.html").read_text()
+
     # Re-verify after fixes
     if fixed:
         stories_html = (SITE / "stories.html").read_text()

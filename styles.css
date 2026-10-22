@@ -855,8 +855,12 @@ ul.navlinks .dropdown,
   list-style: none !important;
   margin: 0;
 }
-.navlinks .has-dropdown:hover > .dropdown,
-.navlinks .has-dropdown:focus-within > .dropdown { display: block !important; }
+/* Desktop only: open on hover/focus. On touch devices the tap script
+   controls the menu via .mobile-open (see mobile block at end of file). */
+@media (hover: hover) and (min-width: 769px) {
+  .navlinks .has-dropdown:hover > .dropdown,
+  .navlinks .has-dropdown:focus-within > .dropdown { display: block !important; }
+}
 .navlinks .dropdown li { list-style: none !important; margin: 0; padding: 0; }
 .navlinks .dropdown li::before { content: none !important; }
 .navlinks .dropdown a {
@@ -868,3 +872,33 @@ ul.navlinks .dropdown,
   white-space: nowrap;
 }
 .navlinks .dropdown a:hover { background: rgba(212,175,55,0.15); color: var(--gold); }
+
+/* Mobile compact cards (2026-10-22): text-only thumbs become slim banners
+   instead of a tall empty 16:9 block; long excerpts clamp to 4 lines. */
+@media (max-width: 640px) {
+  .card .thumb:not(:has(img)) {
+    aspect-ratio: auto;
+    height: 54px;
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+  .thumb-placeholder {
+    min-height: 54px;
+    padding: 10px;
+    font-size: 13px;
+  }
+  .card p.excerpt {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Mobile dropdown (2026-10-22): the tap script toggles .mobile-open; the panel
+   is an absolute overlay (base rule) and never pushes page content aside.
+   It closes when the user taps anywhere outside the menu. */
+@media (max-width: 768px) {
+  .navlinks .has-dropdown > .dropdown.mobile-open { display: block !important; }
+  .navlinks .dropdown { max-width: calc(100vw - 16px); }
+}
