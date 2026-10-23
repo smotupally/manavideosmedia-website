@@ -250,7 +250,7 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;700;800&family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../styles.css?v=20261022b">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="057a8fb0-a6cb-489c-868d-18291b14028d"></script>
 </head>
 <body>
@@ -437,6 +437,24 @@ def sync_posts(state):
         if not headline:
             continue
         slug = slugify(headline) or f"post-{post_id}"
+        # Retry-safety (2026-10-23): if a same-headline article already exists
+        # (e.g. an earlier run whose push landed but whose state wasn't saved),
+        # reuse it — don't mint a -post_id duplicate. Match on headline via <h1>.
+        existing_article = None
+        for af in ARTICLES_DIR.glob("*.html"):
+            try:
+                atext = af.read_text()
+            except Exception:
+                continue
+            m1 = re.search(r'<h1[^>]*>(.*?)</h1>', atext, re.DOTALL)
+            if m1 and slugify(re.sub(r'<[^>]+>', '', m1.group(1)).strip()) == slug:
+                existing_article = af.name
+                break
+        if existing_article:
+            if post_id not in state["synced_posts"]:
+                state["synced_posts"].append(post_id)
+            print(f"Post {post_id}: article already exists as {existing_article}, skipping")
+            continue
         # Avoid overwriting an existing article with the same headline
         if (ARTICLES_DIR / f"{slug}.html").exists():
             slug = f"{slug}-{post_id}"
