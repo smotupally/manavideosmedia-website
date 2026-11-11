@@ -895,9 +895,19 @@ ul.navlinks .dropdown,
 
 /* Mobile dropdown (2026-10-22): the tap script toggles .mobile-open; the panel
    is an absolute overlay (base rule) and never pushes page content aside.
-   It closes when the user taps anywhere outside the menu. */
-@media (max-width: 768px) {
-  .navlinks .has-dropdown > .dropdown.mobile-open { display: block !important; }
+   It closes when the user taps anywhere outside the menu.
+   2026-11-10: extended to (hover: none) at any width — touch tablets
+   (769px+) got neither the tap CSS nor the hover rule, so the dropdowns
+   never opened there. Hover-capable (desktop) devices never match this
+   block via the (hover: none) arm, so desktop rendering is unchanged. */
+@media (max-width: 768px), (hover: none) {
+  .navlinks .has-dropdown > .dropdown.mobile-open {
+    display: block !important;
+    /* Short landscape screens: cap the fixed panel's height so every
+       item stays reachable via internal scroll (2026-11-10). */
+    max-height: calc(100vh - 215px);
+    overflow-y: auto;
+  }
   .navlinks .dropdown { max-width: calc(100vw - 16px); }
 }
 

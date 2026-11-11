@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Telugu Matrimony - Mana Videos Media</title>
 <meta name="description" content="Find trusted Telugu matches in USA & India - Mana Videos Matrimony">
-<link rel="stylesheet" href="styles.css?v=20261022b">
+<link rel="stylesheet" href="styles.css?v=20261110a">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <style>
 .mat-hero { text-align: center; padding: 64px 20px 48px; background: linear-gradient(135deg, #1a1a2e, #16213e); }
@@ -264,7 +264,7 @@
 <script>
 // Dropdown: hover on desktop, tap on mobile
 (function() {
-  var isMobile = function() { return window.innerWidth <= 768; };
+  var isMobile = function() { return window.innerWidth <= 768 || window.matchMedia('(hover: none)').matches; };
   
   document.querySelectorAll('.has-dropdown').forEach(function(item) {
     var dropdown = item.querySelector('.dropdown');
@@ -311,13 +311,16 @@
         d.classList.remove('mobile-open');
       });
       if (!isOpen) {
-        // Mobile: absolute overlay panel under the item, clamped so the
-        // 220px panel never overflows the right edge of the screen
+        // Mobile/tablet: fixed overlay panel under the item, clamped so
+        // the 220px panel never overflows the right edge of the screen.
+        // position:fixed (not absolute) is required: .navlinks is a
+        // horizontal scroll box (overflow-x:auto), which clips an
+        // absolutely-positioned panel below the nav to invisibility.
         var liRect = item.getBoundingClientRect();
         var panelLeft = Math.max(8, Math.min(liRect.left, window.innerWidth - 236));
-        dropdown.style.position = 'absolute';
-        dropdown.style.top = '100%';
-        dropdown.style.left = (panelLeft - liRect.left) + 'px';
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = liRect.bottom + 'px';
+        dropdown.style.left = panelLeft + 'px';
         dropdown.style.setProperty('display', 'block', 'important');
         dropdown.classList.add('mobile-open');
       }

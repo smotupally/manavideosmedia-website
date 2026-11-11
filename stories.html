@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;700;800&family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261022b">
+  <link rel="stylesheet" href="styles.css?v=20261110a">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -1762,7 +1762,7 @@
 <script>
 // Dropdown: hover on desktop, tap on mobile
 (function() {
-  var isMobile = function() { return window.innerWidth <= 768; };
+  var isMobile = function() { return window.innerWidth <= 768 || window.matchMedia('(hover: none)').matches; };
   
   document.querySelectorAll('.has-dropdown').forEach(function(item) {
     var dropdown = item.querySelector('.dropdown');
@@ -1809,13 +1809,16 @@
         d.classList.remove('mobile-open');
       });
       if (!isOpen) {
-        // Mobile: absolute overlay panel under the item, clamped so the
-        // 220px panel never overflows the right edge of the screen
+        // Mobile/tablet: fixed overlay panel under the item, clamped so
+        // the 220px panel never overflows the right edge of the screen.
+        // position:fixed (not absolute) is required: .navlinks is a
+        // horizontal scroll box (overflow-x:auto), which clips an
+        // absolutely-positioned panel below the nav to invisibility.
         var liRect = item.getBoundingClientRect();
         var panelLeft = Math.max(8, Math.min(liRect.left, window.innerWidth - 236));
-        dropdown.style.position = 'absolute';
-        dropdown.style.top = '100%';
-        dropdown.style.left = (panelLeft - liRect.left) + 'px';
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = liRect.bottom + 'px';
+        dropdown.style.left = panelLeft + 'px';
         dropdown.style.setProperty('display', 'block', 'important');
         dropdown.classList.add('mobile-open');
       }

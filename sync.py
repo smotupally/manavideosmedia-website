@@ -191,8 +191,8 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
     # Ad banner HTML for roundups (inside article column, below stories)
     ad_banner_html = """
       <div class="ad-slot">
-        <a href="mailto:manavideosmedia@gmail.com?subject=Advertising%20on%20Mana%20Videos%20Media">
-          <img src="../images/ad-placeholder.png" alt="Advertise with Mana Videos Media - contact manavideosmedia@gmail.com" style="width:100%;height:auto;border-radius:8px;">
+        <a href="https://www.vihatom.com" target="_blank" rel="noopener">
+          <img src="../images/vihatom-ad-800x400.jpg" alt="Vihatom - Roasted, never fried. Crunchy makhana snacks, six flavours, from Rs 199. Shop at www.vihatom.com" style="width:100%;height:auto;border-radius:8px;">
         </a>
       </div>"""
 
@@ -250,7 +250,7 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;700;800&family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261022b">
+  <link rel="stylesheet" href="../styles.css?v=20261110a">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="057a8fb0-a6cb-489c-868d-18291b14028d"></script>
 </head>
 <body>
@@ -372,6 +372,8 @@ def sync_reels(state):
     new_articles = []
     for run_dir in sorted(REEL_DIR.glob("run_*")):
         run_id = run_dir.name
+        if not re.fullmatch(r'run_\d{8}_(am|pm)', run_dir.name):
+            continue
         if run_id in state["synced_reels"]:
             continue
         caption_file = run_dir / "caption.txt"
@@ -546,6 +548,8 @@ def update_reels():
     import re
     reels = []
     for run_dir in REEL_DIR.glob("run_*"):
+        if not re.fullmatch(r'run_\d{8}_(am|pm)', run_dir.name):
+            continue
         url = get_reel_url(run_dir)
         if not url:
             continue
@@ -941,6 +945,8 @@ def sanity_check():
     # Check homepage Latest Reels shows the 3 most recent published reels
     exp_reels = []
     for run_dir in REEL_DIR.glob("run_*"):
+        if not re.fullmatch(r'run_\d{8}_(am|pm)', run_dir.name):
+            continue
         u = get_reel_url(run_dir)
         if not u:
             continue
