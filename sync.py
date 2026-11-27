@@ -347,7 +347,7 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;700;800&family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261127a">
+  <link rel="stylesheet" href="../styles.css?v=20261127b">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="057a8fb0-a6cb-489c-868d-18291b14028d"></script>
 </head>
 <body>
@@ -782,7 +782,7 @@ def update_reels():
             thumb_b64 = cover_card_b64(run_dir)
             date_lbl = f"{m2.group(2)}/{m2.group(3)}/{m2.group(1)} {'Morning' if m2.group(4) == 'am' else 'Evening'}"
         img_html = f'<img src="data:image/webp;base64,{thumb_b64}" alt="USA Telugu News Roundup {date_lbl}" loading="lazy" decoding="async">' if thumb_b64 else ''
-        reels_html += f"""        <a class="reel-card" href="{url}" target="_blank" rel="noopener" aria-label="Watch the {date_lbl} roundup reel on Instagram">{img_html}<span class="reel-play">&#9654;</span><span class="reel-meta">{date_lbl} &bull; Watch on Instagram</span></a>
+        reels_html += f"""        <a class="reel-card" href="{url}" rel="noopener" aria-label="Watch the {date_lbl} roundup reel on Instagram">{img_html}<span class="reel-play">&#9654;</span><span class="reel-meta">{date_lbl} &bull; Watch on Instagram</span></a>
 """
     # Replace the reels-grid content (homepage markup since the 2026-10-17 rebuild;
     # the old "reels-static" pattern silently stopped matching — fixed 2026-10-22)
