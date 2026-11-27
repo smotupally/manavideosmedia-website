@@ -747,10 +747,7 @@ def update_ticker():
 
 
 def update_reels():
-    """Update homepage Latest Reels with 3 most recent published reels.
-
-    2026-11-27: thumbnail cards linking to Instagram instead of IG embeds
-    (embed.js was the heaviest thing on the homepage)."""
+    """Update homepage Latest Reels with 3 most recent published reels."""
     import re
     reels = []
     for run_dir in REEL_DIR.glob("run_*"):
@@ -763,26 +760,21 @@ def update_reels():
         m = re.search(r'run_(\d{8})_(am|pm)', run_dir.name)
         if m:
             date_key = m.group(1) + ("1" if m.group(2) == "am" else "2")
-            reels.append((date_key, url, run_dir))
+            reels.append((date_key, url))
     # Sort newest first, take 3
-    reels.sort(key=lambda t: t[0], reverse=True)
-    latest = reels[:3]
+    reels.sort(reverse=True)
+    latest = [url for _, url in reels[:3]]
     if len(latest) < 3:
         return
     # Update index.html
     ip = SITE / "index.html"
     html = ip.read_text()
+    # Build new reels HTML as direct IG embeds (show by default)
     reels_html = ""
-    for (_dk, url, run_dir) in latest:
+    for url in latest:
         if not url.endswith("/"):
             url += "/"
-        m2 = re.search(r'run_(\d{4})(\d{2})(\d{2})_(am|pm)', run_dir.name)
-        thumb_b64, date_lbl = None, ""
-        if m2:
-            thumb_b64 = cover_card_b64(run_dir)
-            date_lbl = f"{m2.group(2)}/{m2.group(3)}/{m2.group(1)} {'Morning' if m2.group(4) == 'am' else 'Evening'}"
-        img_html = f'<img src="data:image/webp;base64,{thumb_b64}" alt="USA Telugu News Roundup {date_lbl}" loading="lazy" decoding="async">' if thumb_b64 else ''
-        reels_html += f"""        <a class="reel-card" href="{url}" rel="noopener" aria-label="Watch the {date_lbl} roundup reel on Instagram">{img_html}<span class="reel-play">&#9654;</span><span class="reel-meta">{date_lbl} &bull; Watch on Instagram</span></a>
+        reels_html += f"""        <blockquote class="instagram-media" data-instgrm-permalink="{url}" data-instgrm-version="14"></blockquote>
 """
     # Replace the reels-grid content (homepage markup since the 2026-10-17 rebuild;
     # the old "reels-static" pattern silently stopped matching — fixed 2026-10-22)
@@ -798,6 +790,7 @@ def update_reels():
     elif new_html != html:
         ip.write_text(new_html)
         print(f"Updated homepage reels: {len(latest)} latest")
+
 
 def update_homepage_stories():
     """Update homepage Latest Stories with 6 most recent articles."""
