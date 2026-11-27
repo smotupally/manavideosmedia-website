@@ -110,6 +110,9 @@ a:hover { color: var(--gold); }
 .navlinks::after { content: ''; flex: 0 0 18px; }
 .search-wrap input[type="search"] { min-width: 0; flex: 1 1 auto; }
 .search-wrap input[type="date"] { flex: 0 0 auto; width: 148px; color-scheme: dark; }
+.date-label { color: #9fb0c9; font-size: 14px; white-space: nowrap; }
+.search-wrap input[type="date"]::-webkit-datetime-edit { color: #e6ecf5; }
+.search-wrap input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.85; cursor: pointer; }
 @media (max-width: 640px) {
   .search-wrap { flex-wrap: wrap; }
   .search-wrap input[type="search"] { flex: 1 1 100%; }
