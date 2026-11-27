@@ -108,11 +108,13 @@ a:hover { color: var(--gold); }
 .navlinks { display: flex; list-style: none; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .navlinks li { flex: 0 0 auto; }
 .navlinks::after { content: ''; flex: 0 0 18px; }
-@media (max-width: 900px) {
-  .navlinks { -webkit-mask-image: linear-gradient(to right, #000 93%, transparent 100%); mask-image: linear-gradient(to right, #000 93%, transparent 100%); }
-}
 .search-wrap input[type="search"] { min-width: 0; flex: 1 1 auto; }
 .search-wrap input[type="date"] { flex: 0 0 auto; width: 148px; color-scheme: dark; }
+@media (max-width: 640px) {
+  .search-wrap { flex-wrap: wrap; }
+  .search-wrap input[type="search"] { flex: 1 1 100%; }
+  .search-wrap input[type="date"] { flex: 1 1 auto; width: auto; }
+}
 .navlinks a {
   display: block;
   padding: 14px 16px;
