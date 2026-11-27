@@ -218,8 +218,8 @@ a:hover { color: var(--gold); }
 .card h3 a { color: #fff; }
 .card h3 a:hover { color: var(--gold-light); }
 .card .te-sub { color: var(--gold-light); font-size: 15px; }
-.card p.excerpt { color: var(--muted); font-size: 14px; flex: 1; }
-.card .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--border); padding-top: 10px; }
+.card p.excerpt { color: var(--muted); font-size: 15px; line-height: 1.55; flex: 1; }
+.card .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); padding-top: 10px; }
 
 /* ---------- Reels ---------- */
 .reels { display: grid; grid-template-columns: 1fr; gap: 24px; justify-items: center; }
@@ -276,7 +276,8 @@ footer {
 .foot-grid { display: grid; grid-template-columns: 1fr; gap: 28px; margin-bottom: 28px; }
 .foot-grid h4 { color: #fff; font-size: 15px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
 .foot-grid ul { list-style: none; }
-.foot-grid li { margin-bottom: 8px; }
+.foot-grid li { margin-bottom: 10px; }
+.foot-grid a { display: inline-block; padding: 5px 0; }
 .foot-grid a { color: var(--muted); }
 .foot-grid a:hover { color: var(--gold); }
 .foot-brand .logo { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: 1px; }
@@ -863,7 +864,7 @@ ul.navlinks .dropdown,
 .navlinks .dropdown li::before { content: none !important; }
 .navlinks .dropdown a {
   display: block;
-  padding: 10px 20px;
+  padding: 13px 20px;
   color: var(--text);
   text-decoration: none;
   font-size: 0.95rem;
@@ -930,3 +931,16 @@ ul.navlinks .dropdown,
   .foot-grid li { margin-bottom: 5px; }
   .copy { padding-top: 12px; }
 }
+
+/* ---------- 2026-11-27 readability + mobile polish ---------- */
+[id] { scroll-margin-top: 84px; }
+.about-hero h2 { font-size: 28px; line-height: 1.4; color: #fff; margin-bottom: 14px; }
+.about-hero .te { line-height: 1.6; }
+.ticker-scroll { -webkit-mask-image: linear-gradient(to right, #000 94%, transparent 100%); mask-image: linear-gradient(to right, #000 94%, transparent 100%); }
+.lm-hidden { display: none !important; }
+.load-more-btn { display: block; margin: 28px auto 8px; background: var(--gold); color: #000; border: none; border-radius: 999px; padding: 14px 34px; font-size: 16px; font-weight: 700; cursor: pointer; min-height: 48px; }
+.load-more-btn:hover { opacity: 0.9; }
+.reel-card { position: relative; display: block; border-radius: 10px; overflow: hidden; background: var(--navy-3); border: 1px solid var(--border); text-decoration: none; aspect-ratio: 9 / 16; max-height: 480px; width: 100%; }
+.reel-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.reel-card .reel-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 62px; height: 62px; border-radius: 50%; background: rgba(0,0,0,0.55); color: #fff; font-size: 24px; display: flex; align-items: center; justify-content: center; padding-left: 4px; border: 2px solid rgba(255,255,255,0.85); }
+.reel-card .reel-meta { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 12px 10px; background: linear-gradient(transparent, rgba(0,0,0,0.82)); color: #fff; font-size: 13.5px; font-weight: 600; text-align: center; }
