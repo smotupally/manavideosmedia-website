@@ -95,7 +95,26 @@
             <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DeHJMqAD-4q/" data-instgrm-version="14"></blockquote>
           </div>
         </aside>
-        <script async src="https://www.instagram.com/embed.js"></script>
+        <script>
+        (function () {
+          var el = document.querySelector('.reel-sidebar .instagram-media');
+          if (!el) return;
+          var done = false;
+          function load() {
+            if (done) return; done = true;
+            var sc = document.createElement('script');
+            sc.async = true; sc.src = 'https://www.instagram.com/embed.js';
+            document.body.appendChild(sc);
+          }
+          if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function (es) {
+              es.forEach(function (e) { if (e.isIntersecting) { load(); io.disconnect(); } });
+            }, { rootMargin: '600px' });
+            io.observe(el);
+            setTimeout(load, 6000);
+          } else { load(); }
+        })();
+        </script>
       </div>
       <div class="share">
         <div class="share-buttons">
