@@ -81,6 +81,84 @@ def parse_reel_caption(caption):
                 stories.append(clean)
     return header, stories
 
+def save_webp(img_bytes, name, max_w=None, quality=72):
+    """Save image bytes as images/<name>.webp (optionally resized). Returns name."""
+    try:
+        im = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+        if max_w and im.width > max_w:
+            im = im.resize((max_w, int(im.height * max_w / im.width)), Image.LANCZOS)
+        out = SITE / "images" / name
+        out.parent.mkdir(parents=True, exist_ok=True)
+        im.save(out, "WEBP", quality=quality)
+        return name
+    except Exception:
+        return None
+
+
+def reel_cover_thumb(run_dir, slug):
+    """Build images/<slug>-thumb.webp from a reel run's cover. Returns filename or None."""
+    cover = run_dir / "cover-1080x1920.png"
+    if not cover.exists():
+        cands = sorted(run_dir.glob("*cover*.png")) + sorted(run_dir.glob("*cover*.jpg"))
+        if not cands:
+            return None
+        cover = cands[0]
+    target = SITE / "images" / f"{slug}-thumb.webp"
+    if target.exists():
+        return target.name
+    return save_webp(cover.read_bytes(), f"{slug}-thumb.webp", max_w=480, quality=68)
+
+
+def webp_b64(img_bytes, max_w=None, quality=60):
+    """Base64 WebP payload (no data: prefix) for inlining. None on failure.
+    2026-11-27 (revised): the GitHub push tool carries text only and per-file
+    binary uploads each need a user approval, so images are inlined as WebP —
+    roughly half the bytes of the old JPEG inlining."""
+    try:
+        im = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+        if max_w and im.width > max_w:
+            im = im.resize((max_w, int(im.height * max_w / im.width)), Image.LANCZOS)
+        buf = io.BytesIO()
+        im.save(buf, "WEBP", quality=quality)
+        return base64.b64encode(buf.getvalue()).decode()
+    except Exception:
+        return None
+
+
+def _cover_path(run_dir):
+    cover = run_dir / "cover-1080x1920.png"
+    if cover.exists():
+        return cover
+    cands = sorted(run_dir.glob("*cover*.png")) + sorted(run_dir.glob("*cover*.jpg"))
+    return cands[0] if cands else None
+
+
+def cover_thumb_b64(run_dir):
+    """Card thumb from a reel cover: 16:9 band crop, 240x135 WebP, base64."""
+    cover = _cover_path(run_dir)
+    if not cover:
+        return None
+    try:
+        im = Image.open(cover).convert("RGB")
+        w, h = im.size
+        bh = int(w * 9 / 16)
+        y0 = min(max(0, (h - bh) // 2 - int(h * 0.08)), h - bh)
+        im = im.crop((0, y0, w, y0 + bh)).resize((220, 124), Image.LANCZOS)
+        buf = io.BytesIO()
+        im.save(buf, "WEBP", quality=45)
+        return base64.b64encode(buf.getvalue()).decode()
+    except Exception:
+        return None
+
+
+def cover_card_b64(run_dir):
+    """Homepage reel-card image from a reel cover: 360w WebP, base64."""
+    cover = _cover_path(run_dir)
+    if not cover:
+        return None
+    return webp_b64(cover.read_bytes(), max_w=300, quality=52)
+
+
 def get_reel_url(run_dir):
     """Find the published Instagram reel URL."""
     pr = run_dir / "publish_result.txt"
@@ -220,7 +298,26 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
             <blockquote class="instagram-media" data-instgrm-permalink="{reel_url}" data-instgrm-version="14"></blockquote>
           </div>
         </aside>
-        <script async src="https://www.instagram.com/embed.js"></script>
+        <script>
+        (function () {{
+          var el = document.querySelector('.reel-sidebar .instagram-media');
+          if (!el) return;
+          var done = false;
+          function load() {{
+            if (done) return; done = true;
+            var sc = document.createElement('script');
+            sc.async = true; sc.src = 'https://www.instagram.com/embed.js';
+            document.body.appendChild(sc);
+          }}
+          if ('IntersectionObserver' in window) {{
+            var io = new IntersectionObserver(function (es) {{
+              es.forEach(function (e) {{ if (e.isIntersecting) {{ load(); io.disconnect(); }} }});
+            }}, {{ rootMargin: '600px' }});
+            io.observe(el);
+            setTimeout(load, 6000);
+          }} else {{ load(); }}
+        }})();
+        </script>
       </div>"""
     else:
         # Static post: single column + related stories
@@ -250,7 +347,7 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;700;800&family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261110a">
+  <link rel="stylesheet" href="../styles.css?v=20261127a">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="057a8fb0-a6cb-489c-868d-18291b14028d"></script>
 </head>
 <body>
@@ -277,8 +374,25 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
   <div class="container">
     <ul class="navlinks">
       <li><a href="../index.html">Home</a></li>
-      <li><a href="../stories.html">Stories</a></li>
+      <li class="has-dropdown" style="position:relative;">
+        <a href="../stories.html">News \u25be</a>
+        <ul class="dropdown" style="display:none;position:absolute;top:100%;left:0;background:#1a1a2e;border:1px solid #333;border-radius:8px;min-width:220px;padding:8px 0;z-index:1000;list-style:none;margin:0;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+          <li><a href="../stories.html">All Stories</a></li>
+          <li><a href="../stories.html?cat=community">Community News</a></li>
+          <li><a href="../stories.html?cat=politics">Politics</a></li>
+          <li><a href="../stories.html?cat=nri">NRI Hub</a></li>
+          <li><a href="../stories.html?cat=visa">Visa &amp; Immigration</a></li>
+          <li><a href="../archive.html">Archive</a></li>
+        </ul>
+      </li>
       <li><a href="../channels.html">Channels</a></li>
+      <li class="has-dropdown" style="position:relative;">
+        <a href="#">Services \u25be</a>
+        <ul class="dropdown" style="display:none;position:absolute;top:100%;left:0;background:#1a1a2e;border:1px solid #333;border-radius:8px;min-width:220px;padding:8px 0;z-index:1000;list-style:none;margin:0;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+          <li><a href="../horoscope.html">Horoscope</a></li>
+          <li><a href="../matrimony.html">Matrimony</a></li>
+        </ul>
+      </li>
       <li><a href="../about.html">About</a></li>
       <li><a href="../contact.html">Contact</a></li>
     </ul>
@@ -363,6 +477,93 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
   }});
 }})();
 </script>
+<script>
+// Dropdown: hover on desktop, tap on mobile
+(function() {{
+  var isMobile = function() {{ return window.innerWidth <= 768 || window.matchMedia('(hover: none)').matches; }};
+  
+  document.querySelectorAll('.has-dropdown').forEach(function(item) {{
+    var dropdown = item.querySelector('.dropdown');
+    var link = item.querySelector(':scope > a');
+    if (!dropdown || !link) return;
+    
+    // Make it clear this is tappable
+    link.style.cursor = 'pointer';
+    link.setAttribute('aria-haspopup', 'true');
+    
+    // Desktop hover
+    var hideTimer = null;
+    function showDropdown() {{
+      if (!isMobile()) {{
+        clearTimeout(hideTimer);
+        var rect = item.getBoundingClientRect();
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = rect.bottom + 'px';
+        dropdown.style.left = rect.left + 'px';
+        dropdown.style.display = 'block';
+      }}
+    }}
+    function hideDropdown() {{
+      if (!isMobile()) {{
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(function() {{ dropdown.style.display = 'none'; }}, 200);
+      }}
+    }}
+    item.addEventListener('mouseenter', showDropdown);
+    item.addEventListener('mouseleave', hideDropdown);
+    
+    // Mobile: tap toggles (use touchstart for instant iOS response + click fallback)
+    var lastTouchToggle = 0;
+    function toggleDropdown(e) {{
+      if (!isMobile()) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.type === 'click' && Date.now() - lastTouchToggle < 700) return;
+      if (e.type === 'touchstart') lastTouchToggle = Date.now();
+      
+      var isOpen = dropdown.classList.contains('mobile-open');
+      document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {{
+        d.style.removeProperty('display');
+        d.classList.remove('mobile-open');
+      }});
+      if (!isOpen) {{
+        // Mobile/tablet: fixed overlay panel under the item, clamped so
+        // the 220px panel never overflows the right edge of the screen.
+        // position:fixed (not absolute) is required: .navlinks is a
+        // horizontal scroll box (overflow-x:auto), which clips an
+        // absolutely-positioned panel below the nav to invisibility.
+        var liRect = item.getBoundingClientRect();
+        var panelLeft = Math.max(8, Math.min(liRect.left, window.innerWidth - 236));
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = liRect.bottom + 'px';
+        dropdown.style.left = panelLeft + 'px';
+        dropdown.style.setProperty('display', 'block', 'important');
+        dropdown.classList.add('mobile-open');
+      }}
+    }}
+    link.addEventListener('touchstart', toggleDropdown, {{passive: false}});
+    link.addEventListener('click', toggleDropdown);
+  }});
+  
+  // Close on tap elsewhere
+  document.addEventListener('touchstart', function(e) {{
+    if (isMobile() && !e.target.closest('.has-dropdown')) {{
+      document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {{
+        d.style.removeProperty('display');
+        d.classList.remove('mobile-open');
+      }});
+    }}
+  }}, {{passive: true}});
+  document.addEventListener('click', function(e) {{
+    if (isMobile() && !e.target.closest('.has-dropdown')) {{
+      document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {{
+        d.style.removeProperty('display');
+        d.classList.remove('mobile-open');
+      }});
+    }}
+  }});
+}})();
+</script>
 </body>
 </html>
 """
@@ -407,8 +608,10 @@ def sync_reels(state):
         # Reel goes in sidebar via reel_url param, not in body
         html = article_template(slug, esc(headline), te_sub, date_str, 3, "community", paras, "", reel_url=reel_url)
         (ARTICLES_DIR / f"{slug}.html").write_text(html)
+        thumb_b64 = cover_thumb_b64(run_dir)
         new_articles.append({
             "slug": slug, "headline": headline, "te_sub": te_sub,
+            "thumb_b64": thumb_b64, "thumb_mime": "webp",
             "date": date_str, "read_min": 3, "category": "community",
             "excerpt": esc(f"{len(stories)} stories: " + "; ".join(stories[:2]) + ("..." if len(stories) > 2 else "")),
         })
@@ -471,13 +674,24 @@ def sync_posts(state):
         # Find graphic
         graphic = None
         cropped_b64 = None
+        thumb_file = None
+        thumb_b64 = None
         image_html = ""
         for img in post_dir.glob("*1080x1350.png"):
             # Crop the photo section (simple crop, no Telugu text, watermark included)
-            # Pattern: user-approved 2026-10-17 — same image in card and article
+            # Pattern: user-approved 2026-10-17 — same image in card and article.
+            # 2026-11-27: hero + card thumb inlined as WebP (see below).
             cropped_b64 = crop_post_graphic(img)
             if cropped_b64:
-                image_html = f'<div class="article-image"><img src="data:image/jpeg;base64,{cropped_b64}" alt="{headline[:50]}" style="width:100%;height:auto;border-radius:8px"></div>'
+                raw = base64.b64decode(cropped_b64)
+                # Inline WebP: push tool carries text only; per-file binary
+                # uploads each need an approval (user rejected, 2026-11-27).
+                hero_b64 = webp_b64(raw, max_w=1080, quality=72)
+                if hero_b64:
+                    image_html = f'<div class="article-image"><img src="data:image/webp;base64,{hero_b64}" alt="{headline[:50]}" style="width:100%;height:auto;border-radius:8px" decoding="async"></div>'
+                    thumb_b64 = webp_b64(raw, max_w=220, quality=45)
+                else:
+                    image_html = ""
             else:
                 image_html = ""
             break
@@ -490,22 +704,11 @@ def sync_posts(state):
         related_html = get_related_stories_html(slug, category)
         html = article_template(slug, esc(headline), te_sub, post_id, 2, category, paras, extra, image_html, related_html=related_html)
         (ARTICLES_DIR / f"{slug}.html").write_text(html)
-        # Store cropped image for card thumbnail (same image in card and article)
-        thumb_b64 = ""
-        if cropped_b64:
-            try:
-                thumb_img = Image.open(io.BytesIO(base64.b64decode(cropped_b64)))
-                thumb_img.thumbnail((250, 140))
-                tbuf = io.BytesIO()
-                thumb_img.save(tbuf, format='JPEG', quality=50, optimize=True)
-                thumb_b64 = base64.b64encode(tbuf.getvalue()).decode()
-            except:
-                pass
         new_articles.append({
             "slug": slug, "headline": headline, "te_sub": te_sub,
             "date": post_id, "read_min": 2, "category": category,
             "excerpt": esc(caption.split('\n')[1][:150]) if '\n' in caption else esc(headline[:100]),
-            "thumb_b64": thumb_b64,
+            "thumb_b64": thumb_b64, "thumb_mime": "webp",
         })
         state["synced_posts"].append(post_id)
         print(f"Post article: {slug}")
@@ -544,7 +747,10 @@ def update_ticker():
 
 
 def update_reels():
-    """Update homepage Latest Reels with 3 most recent published reels."""
+    """Update homepage Latest Reels with 3 most recent published reels.
+
+    2026-11-27: thumbnail cards linking to Instagram instead of IG embeds
+    (embed.js was the heaviest thing on the homepage)."""
     import re
     reels = []
     for run_dir in REEL_DIR.glob("run_*"):
@@ -557,21 +763,26 @@ def update_reels():
         m = re.search(r'run_(\d{8})_(am|pm)', run_dir.name)
         if m:
             date_key = m.group(1) + ("1" if m.group(2) == "am" else "2")
-            reels.append((date_key, url))
+            reels.append((date_key, url, run_dir))
     # Sort newest first, take 3
-    reels.sort(reverse=True)
-    latest = [url for _, url in reels[:3]]
+    reels.sort(key=lambda t: t[0], reverse=True)
+    latest = reels[:3]
     if len(latest) < 3:
         return
     # Update index.html
     ip = SITE / "index.html"
     html = ip.read_text()
-    # Build new reels HTML as direct IG embeds (show by default)
     reels_html = ""
-    for url in latest:
+    for (_dk, url, run_dir) in latest:
         if not url.endswith("/"):
             url += "/"
-        reels_html += f"""        <blockquote class="instagram-media" data-instgrm-permalink="{url}" data-instgrm-version="14"></blockquote>
+        m2 = re.search(r'run_(\d{4})(\d{2})(\d{2})_(am|pm)', run_dir.name)
+        thumb_b64, date_lbl = None, ""
+        if m2:
+            thumb_b64 = cover_card_b64(run_dir)
+            date_lbl = f"{m2.group(2)}/{m2.group(3)}/{m2.group(1)} {'Morning' if m2.group(4) == 'am' else 'Evening'}"
+        img_html = f'<img src="data:image/webp;base64,{thumb_b64}" alt="USA Telugu News Roundup {date_lbl}" loading="lazy" decoding="async">' if thumb_b64 else ''
+        reels_html += f"""        <a class="reel-card" href="{url}" target="_blank" rel="noopener" aria-label="Watch the {date_lbl} roundup reel on Instagram">{img_html}<span class="reel-play">&#9654;</span><span class="reel-meta">{date_lbl} &bull; Watch on Instagram</span></a>
 """
     # Replace the reels-grid content (homepage markup since the 2026-10-17 rebuild;
     # the old "reels-static" pattern silently stopped matching — fixed 2026-10-22)
@@ -587,7 +798,6 @@ def update_reels():
     elif new_html != html:
         ip.write_text(new_html)
         print(f"Updated homepage reels: {len(latest)} latest")
-
 
 def update_homepage_stories():
     """Update homepage Latest Stories with 6 most recent articles."""
@@ -732,14 +942,19 @@ def update_listings(new_articles):
             continue
         cat_label = CATEGORY_LABELS[a["category"]]
         # Same image in card and article (user requirement 2026-10-17)
-        thumb_html = f'<img src="data:image/jpeg;base64,{a["thumb_b64"]}" alt="" style="width:100%;height:100%;object-fit:cover">' if a.get("thumb_b64") else cat_label.upper()
+        if a.get("thumb_b64"):
+            thumb_html = f'<img src="data:image/{a.get("thumb_mime", "jpeg")};base64,{a["thumb_b64"]}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">'
+        elif a.get("thumb_file"):
+            thumb_html = f'<img src="images/{a["thumb_file"]}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">'
+        else:
+            thumb_html = cat_label.upper()
         cards += f"""        <article class="card" data-category="{a['category']}">
           <div class="thumb">{thumb_html}</div>
           <div class="body">
             <span class="pill">{cat_label}</span>
             <h3><a href="articles/{a['slug']}.html">{esc(a['headline'])}</a></h3>
             <div class="te-sub">{a['te_sub']}</div>
-            <p class="excerpt">{esc(a['excerpt'])}</p>
+            <p class="excerpt">{a['excerpt']}</p>
             <div class="meta"><span>{a['date']}</span><span>{a['read_min']} min read</span></div>
           </div>
         </article>
@@ -763,6 +978,9 @@ def update_listings(new_articles):
         if t not in _seen:
             _seen.add(t)
             _unique.append(c)
+    # Cap the stories page at 48 cards (2026-11-27): older stories stay fully
+    # listed in archive.html; uncapped, the page reached 473 KB on mobile.
+    _unique = _unique[:48]
     gs = html.find('id="story-grid"')
     gs = html.rfind('<div', 0, gs)
     depth, pos = 0, gs
@@ -785,6 +1003,11 @@ def update_listings(new_articles):
     today = datetime.now().strftime("%Y-%m-%d")
     urls = ""
     for a in new_articles:
+        # Skip if already in sitemap (retry safety: unmarked state re-runs
+        # would otherwise append a duplicate <url> on every run — seen
+        # 2026-11-16: 22 copies of roundup-2026-11-15-evening)
+        if f"articles/{a['slug']}.html" in sm:
+            continue
         urls += f"""  <url>
     <loc>https://manavideosmedia.com/articles/{a['slug']}.html</loc>
     <lastmod>{today}</lastmod>

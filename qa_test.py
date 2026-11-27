@@ -109,12 +109,13 @@ def test_content_sync():
     archive_html = (SITE/"archive.html").read_text()
     archive_links = set(re.findall(r'articles/([a-z0-9\-\.]+\.html)', archive_html))
     
-    if articles == story_links:
-        result.ok(f"stories.html: {len(articles)} articles")
+    # 2026-11-27 design: stories.html carries only the newest 48 cards;
+    # archive.html is the complete index (checked just below).
+    extra = story_links - articles
+    if not extra and 0 < len(story_links) <= 48:
+        result.ok(f"stories.html: {len(story_links)} newest cards (cap 48), 0 broken")
     else:
-        missing = articles - story_links
-        extra = story_links - articles
-        result.fail("stories.html sync", f"missing={len(missing)}, broken={len(extra)}")
+        result.fail("stories.html sync", f"cards={len(story_links)}, broken={len(extra)}")
     
     if articles == archive_links:
         result.ok(f"archive.html: {len(articles)} articles")
@@ -137,7 +138,7 @@ def test_homepage_latest():
     if ls_start < 0:
         result.fail("Homepage", "Latest Stories section not found")
         return
-    ls_section = index_html[ls_start:ls_start+8000]
+    ls_section = index_html[ls_start:ls_start+60000]  # cards carry inline thumbs (~7 KB each) since 2026-11-27
     homepage_links = re.findall(r'articles/([a-z0-9\-\.]+\.html)', ls_section)
     
     # Top 3 from stories should be in homepage Latest Stories
@@ -175,6 +176,10 @@ def test_mobile_css():
     # rule; the old always-visible in-flow block must be gone from the page)
     index_html = (SITE/"index.html").read_text()
     styles_css = (SITE/"styles.css").read_text()
+    if 'styles.css?v=' in index_html:
+        result.ok("Stylesheet link is versioned (forces fresh CSS on phones)")
+    else:
+        result.fail("Stylesheet versioning", "index.html links styles.css without a ?v= version")
     if ('.dropdown.mobile-open' in styles_css and 'mobile-open' in index_html
             and 'position: static !important' not in index_html):
         result.ok("Nav dropdown has mobile CSS")
