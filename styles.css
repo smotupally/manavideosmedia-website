@@ -436,6 +436,8 @@ footer {
 
 .share-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 28px 0 8px; padding-top: 20px; border-top: 1px solid var(--gold); }
 .share-label { font-weight: 700; color: #fff; margin-right: 4px; }
+.share-top { margin: 12px 0 4px; }
+.share-top .share-btn { padding: 7px 14px; font-size: 13px; }
 .share-btn { display: inline-block; padding: 9px 18px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none; cursor: pointer; border: none; transition: opacity .15s; }
 .share-btn:hover { opacity: .85; }
 .share-btn.whatsapp { background: #25d366; color: #fff; }

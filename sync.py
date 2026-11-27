@@ -337,6 +337,7 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
   <link rel="canonical" href="https://manavideosmedia.com/articles/{slug}.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="{headline}">
+  <meta property="og:description" content="{headline}">
   <meta property="og:url" content="https://manavideosmedia.com/articles/{slug}.html">
   <meta property="og:site_name" content="Mana Videos Media">
   <meta property="og:image" content="https://manavideosmedia.com/og-image.png">
@@ -347,7 +348,7 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;700;800&family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261127d">
+  <link rel="stylesheet" href="../styles.css?v=20261127e">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="057a8fb0-a6cb-489c-868d-18291b14028d"></script>
 </head>
 <body>
@@ -408,6 +409,16 @@ def article_template(slug, headline, te_sub, date_str, read_min, category, body_
       {image_html}
       <div class="te-sub">{te_sub}</div>
       <div class="meta"><span>{date_str}</span><span class="sep">•</span><span>{read_min} min read</span><span class="sep">•</span><span>By Mana Videos Media</span></div>
+
+      <div class="share share-top">
+        <div class="share-buttons">
+          <span class="share-label">Share this story:</span>
+          <a href="#" class="share-btn whatsapp" data-share="whatsapp" aria-label="Share on WhatsApp">WhatsApp</a>
+          <a href="#" class="share-btn x" data-share="x" aria-label="Share on X">X</a>
+          <a href="#" class="share-btn facebook" data-share="facebook" aria-label="Share on Facebook">Facebook</a>
+          <button class="share-btn copy" data-share="copy" aria-label="Copy link">Copy Link</button>
+        </div>
+      </div>
 {article_body_section}
       <div class="share">
         <div class="share-buttons">
