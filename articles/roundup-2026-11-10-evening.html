@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;700;800&family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261110a">
+  <link rel="stylesheet" href="../styles.css?v=20261127a">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="057a8fb0-a6cb-489c-868d-18291b14028d"></script>
 </head>
 <body>
@@ -45,8 +45,25 @@
   <div class="container">
     <ul class="navlinks">
       <li><a href="../index.html">Home</a></li>
-      <li><a href="../stories.html">Stories</a></li>
+      <li class="has-dropdown" style="position:relative;">
+        <a href="../stories.html">News ▾</a>
+        <ul class="dropdown" style="display:none;position:absolute;top:100%;left:0;background:#1a1a2e;border:1px solid #333;border-radius:8px;min-width:220px;padding:8px 0;z-index:1000;list-style:none;margin:0;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+          <li><a href="../stories.html">All Stories</a></li>
+          <li><a href="../stories.html?cat=community">Community News</a></li>
+          <li><a href="../stories.html?cat=politics">Politics</a></li>
+          <li><a href="../stories.html?cat=nri">NRI Hub</a></li>
+          <li><a href="../stories.html?cat=visa">Visa &amp; Immigration</a></li>
+          <li><a href="../archive.html">Archive</a></li>
+        </ul>
+      </li>
       <li><a href="../channels.html">Channels</a></li>
+      <li class="has-dropdown" style="position:relative;">
+        <a href="#">Services ▾</a>
+        <ul class="dropdown" style="display:none;position:absolute;top:100%;left:0;background:#1a1a2e;border:1px solid #333;border-radius:8px;min-width:220px;padding:8px 0;z-index:1000;list-style:none;margin:0;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+          <li><a href="../horoscope.html">Horoscope</a></li>
+          <li><a href="../matrimony.html">Matrimony</a></li>
+        </ul>
+      </li>
       <li><a href="../about.html">About</a></li>
       <li><a href="../contact.html">Contact</a></li>
     </ul>
@@ -158,6 +175,93 @@
   var dateStr = now.toLocaleDateString('en-US', opts) + ' | ' + teDays[now.getDay()];
   document.querySelectorAll('.topbar .date').forEach(function (el) {
     el.textContent = dateStr;
+  });
+})();
+</script>
+<script>
+// Dropdown: hover on desktop, tap on mobile
+(function() {
+  var isMobile = function() { return window.innerWidth <= 768 || window.matchMedia('(hover: none)').matches; };
+  
+  document.querySelectorAll('.has-dropdown').forEach(function(item) {
+    var dropdown = item.querySelector('.dropdown');
+    var link = item.querySelector(':scope > a');
+    if (!dropdown || !link) return;
+    
+    // Make it clear this is tappable
+    link.style.cursor = 'pointer';
+    link.setAttribute('aria-haspopup', 'true');
+    
+    // Desktop hover
+    var hideTimer = null;
+    function showDropdown() {
+      if (!isMobile()) {
+        clearTimeout(hideTimer);
+        var rect = item.getBoundingClientRect();
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = rect.bottom + 'px';
+        dropdown.style.left = rect.left + 'px';
+        dropdown.style.display = 'block';
+      }
+    }
+    function hideDropdown() {
+      if (!isMobile()) {
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(function() { dropdown.style.display = 'none'; }, 200);
+      }
+    }
+    item.addEventListener('mouseenter', showDropdown);
+    item.addEventListener('mouseleave', hideDropdown);
+    
+    // Mobile: tap toggles (use touchstart for instant iOS response + click fallback)
+    var lastTouchToggle = 0;
+    function toggleDropdown(e) {
+      if (!isMobile()) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.type === 'click' && Date.now() - lastTouchToggle < 700) return;
+      if (e.type === 'touchstart') lastTouchToggle = Date.now();
+      
+      var isOpen = dropdown.classList.contains('mobile-open');
+      document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {
+        d.style.removeProperty('display');
+        d.classList.remove('mobile-open');
+      });
+      if (!isOpen) {
+        // Mobile/tablet: fixed overlay panel under the item, clamped so
+        // the 220px panel never overflows the right edge of the screen.
+        // position:fixed (not absolute) is required: .navlinks is a
+        // horizontal scroll box (overflow-x:auto), which clips an
+        // absolutely-positioned panel below the nav to invisibility.
+        var liRect = item.getBoundingClientRect();
+        var panelLeft = Math.max(8, Math.min(liRect.left, window.innerWidth - 236));
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = liRect.bottom + 'px';
+        dropdown.style.left = panelLeft + 'px';
+        dropdown.style.setProperty('display', 'block', 'important');
+        dropdown.classList.add('mobile-open');
+      }
+    }
+    link.addEventListener('touchstart', toggleDropdown, {passive: false});
+    link.addEventListener('click', toggleDropdown);
+  });
+  
+  // Close on tap elsewhere
+  document.addEventListener('touchstart', function(e) {
+    if (isMobile() && !e.target.closest('.has-dropdown')) {
+      document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {
+        d.style.removeProperty('display');
+        d.classList.remove('mobile-open');
+      });
+    }
+  }, {passive: true});
+  document.addEventListener('click', function(e) {
+    if (isMobile() && !e.target.closest('.has-dropdown')) {
+      document.querySelectorAll('.has-dropdown .dropdown').forEach(function(d) {
+        d.style.removeProperty('display');
+        d.classList.remove('mobile-open');
+      });
+    }
   });
 })();
 </script>
